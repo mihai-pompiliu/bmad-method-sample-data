@@ -68,6 +68,7 @@ Density spectrum across the corpus: **3 lines** (one-liner intent, three-line pi
 | **bmad-shard-doc** | `prds/prd-hivelink-*`, `prds/prd-medivault-*` — maximalist shard targets |
 | **bmad-document-project** | `prds/prd-aurora-migration-*` style brownfield documentation rehearsal |
 | **bmad-kernel-validate** (if/when it exists) | All of `bmad-spec-kernel/` — 4 clean exemplars to verify pass-through, 4 deliberate-violation studies to verify detection |
+| **bmad-bmb (BMad Builder) router** | See the "BMad-bmb reroute candidates" section below — entries whose described product is actually a BMad agent, skill, or workflow in disguise. Tests whether a router skill correctly identifies "this should be built inside BMad, not as a SaaS." |
 
 ---
 
@@ -297,6 +298,36 @@ Entries deliberately stressing specific Spec Law rules:
 - **Rule 3 (constraints actually bend design):** [intents/kernel-rss-revival](intents/kernel-rss-revival-2026-05-17/spec.md) (decorative constraint), [prds/prd-junior-pm-bad](prds/prd-junior-pm-bad-2026-05-17/prd.md); control cases: [prds/prd-palletpulse](prds/prd-palletpulse-2026-05-17/prd.md), [prds/prd-firmware-leakmate](prds/prd-firmware-leakmate-2026-05-17/prd.md), [bmad-spec-kernel/kernel-warehouse-pick-paths](bmad-spec-kernel/kernel-warehouse-pick-paths-2026-05-17/spec.md), [bmad-spec-kernel/kernel-insurance-claims-triage](bmad-spec-kernel/kernel-insurance-claims-triage-2026-05-17/spec.md)
 - **Rule 4 (non-goals explicit):** [prds/prd-pomodorolite](prds/prd-pomodorolite-2026-05-17/prd.md) (absent), [prds/prd-junior-pm-bad](prds/prd-junior-pm-bad-2026-05-17/prd.md) (token only), [bmad-spec-kernel/kernel-violations-mixed-concerns](bmad-spec-kernel/kernel-violations-mixed-concerns-2026-05-17/spec.md) (non-goals smuggle aspirations)
 - **Rule 5 (success signal concrete):** [intents/kernel-rss-revival](intents/kernel-rss-revival-2026-05-17/spec.md), [prds/prd-echocraft](prds/prd-echocraft-2026-05-17/prd.md) ("delighted gasp"), [prds/prd-craftcircle](prds/prd-craftcircle-2026-05-17/prd.md), [prds/prd-junior-pm-bad](prds/prd-junior-pm-bad-2026-05-17/prd.md), [prds/prd-vibes-fashion-app](prds/prd-vibes-fashion-app-2026-05-17/prd.md), [bmad-spec-kernel/kernel-violations-non-falsifiable](bmad-spec-kernel/kernel-violations-non-falsifiable-2026-05-17/spec.md), [bmad-spec-kernel/kernel-violations-mixed-concerns](bmad-spec-kernel/kernel-violations-mixed-concerns-2026-05-17/spec.md) (success is a laundry list)
+
+### BMad-bmb reroute candidates
+
+Some entries describe a "product" that, on inspection, is really a request for a BMad agent, skill, or workflow. A well-built bmad-spec or routing skill should flag these for the BMad Builder (`bmad-bmb`) instead of marching them down the PRD pipeline. These entries are the routing-decision test set.
+
+**Strong reroute (the described product *is* a BMad agent/skill/workflow):**
+
+| Entry | Why it reroutes |
+|---|---|
+| [braindumps/braindump-standup-killer](braindumps/braindump-standup-killer-2026-05-17/braindump.md) | An AI agent ingesting dev signals (commits, PRs, calendar) and emitting an async standup. BMad agent + workflow, not a SaaS. |
+| [prds/prfaq-meetingdoctor](prds/prfaq-meetingdoctor-2026-05-17/prfaq.md) | Calendar/Zoom-metadata ingest → meeting recommendations. BMad workflow: ingest skill + analysis skill + report skill. |
+| [prds/prfaq-internal-runbook-builder](prds/prfaq-internal-runbook-builder-2026-05-17/prfaq.md) | Generate runbooks from incident artifacts. Textbook BMad skill, or small workflow chaining ingest → outline → fill. |
+| [braindumps/braindump-after-customer-coffee](braindumps/braindump-after-customer-coffee-2026-05-17/braindump.md) | Founder explicitly wants help structuring post-coffee customer-signal interpretation. BMad skill ("post-customer-conversation analysis"). |
+| [braindumps/braindump-post-call-memo](braindumps/braindump-post-call-memo-2026-05-17/memo.md) | "Help me distill this hot customer call before I lose the thread." BMad skill. |
+| [transcripts/transcript-zoom-customer-interview](transcripts/transcript-zoom-customer-interview-2026-05-17/transcript.md) | Magic-wand answer is "something that listens to conversations and generates the handoff as a byproduct" — transcript-ingest skill + structured-summary skill, not a SaaS. |
+
+**Ambiguous overlap (could be a BMad skill or a real product depending on goal):**
+
+| Entry | The tension |
+|---|---|
+| [prds/prd-ai-agent-inbox](prds/prd-ai-agent-inbox-2026-05-17/prd.md) | Claude-native inbox triager. BMad agent if the user owns the runtime; SaaS if they want to sell it to non-BMad users. |
+| [prds/prd-rag-obsidian-chat](prds/prd-rag-obsidian-chat-2026-05-17/prd.md) | Obsidian RAG chat is genuinely a BMad-installable skill for many users. Routing depends on whether the goal is a community Obsidian plugin or a personal BMad knowledge agent. |
+| [prds/prd-mac-streamdeck-prompts](prds/prd-mac-streamdeck-prompts-2026-05-17/prd.md) | Stream Deck → AI prompts is one BMad-skill thin client away from existing. |
+| [prds/prd-vscode-ext-commitnudge](prds/prd-vscode-ext-commitnudge-2026-05-17/prd.md) | Commit-message nudging is a BMad developer skill in disguise; the IDE-extension wrapper is the only product-y part. |
+
+**Stay as-is (genuinely product, SaaS, hardware, or regulated — not BMad work):**
+
+All BRDs (corporate ops systems), `prd-fintech-rentsplit`, `prd-edtech-mathmentor`, `prd-medivault`, `prd-cardiacwatch`, `prd-firmware-leakmate`, `prd-palletpulse`, `prd-watchos-reverse-alarm`, the games/marketplaces (`prd-echocraft`, `prd-craftcircle`), and most consumer-mobile PRFAQs (`prfaq-rendezvous`) describe products that need to ship as products. A router should NOT reroute these.
+
+**As a test set:** 6 strong reroute + 4 ambiguous + the broader "stay as-is" set is a graded difficulty curve for any BMad routing or triage skill. Misroutes in either direction are calibration signals.
 
 ### BRD-specific test focus
 
