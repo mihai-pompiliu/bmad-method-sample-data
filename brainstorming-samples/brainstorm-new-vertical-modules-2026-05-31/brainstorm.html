@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where AI Meets a Life Moment — A Brainstorm Keepsake</title>
+<style>
+  :root{
+    --ink:#241f1a;
+    --ink-soft:#5a5249;
+    --paper:#f6f1e7;
+    --paper-2:#efe7d8;
+    --line:#d8cbb3;
+    --gold:#b8862b;
+    --gold-deep:#8a611a;
+    --root:#6b4a2a;
+    --leaf:#5a7a3a;
+    --leaf-soft:#88a85e;
+    /* elements */
+    --fire-1:#c8431f; --fire-2:#e87a2c; --fire-bg:#fbe9dd;
+    --water-1:#2a6f8e; --water-2:#5aa0bd; --water-bg:#e2f0f3;
+    --earth-1:#6b4a2a; --earth-2:#9c7a4a; --earth-bg:#efe6d4;
+    --air-1:#7a6a9c; --air-2:#a99fc4; --air-bg:#ece9f3;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
+  h1,h2,h3,h4{font-weight:600;letter-spacing:.2px;line-height:1.2;margin:0;}
+  .mono{font-family:"SF Mono",ui-monospace,"Menlo",Consolas,monospace;}
+  .small-caps{text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:96px 0 72px;
+    background:
+      radial-gradient(140% 90% at 50% -10%, #fffaf0 0%, var(--paper) 55%, var(--paper-2) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .hero .glow{
+    position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(40% 30% at 50% 18%, rgba(184,134,43,.18), transparent 70%);
+  }
+  .hero-inner{position:relative;text-align:center;}
+  .eyebrow{color:var(--gold-deep);font-weight:600;}
+  .hero h1{
+    font-size:clamp(2.3rem,5.4vw,4rem);
+    margin:18px auto 14px;
+    max-width:16ch;
+  }
+  .hero .sub{
+    color:var(--ink-soft);
+    font-size:clamp(1.05rem,2.2vw,1.35rem);
+    max-width:60ch;margin:0 auto 8px;font-style:italic;
+  }
+  .hero .topic{
+    margin:34px auto 0;max-width:64ch;
+    color:var(--ink-soft);font-size:1rem;
+  }
+  .stat-row{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:40px;
+  }
+  .stat{
+    background:#fffdf8;border:1px solid var(--line);
+    border-radius:14px;padding:16px 22px;min-width:120px;
+    box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 6px 20px rgba(120,90,40,.06);
+  }
+  .stat .n{font-size:1.9rem;font-weight:700;color:var(--gold-deep);}
+  .stat .l{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);}
+  .thesis{
+    margin:46px auto 0;max-width:54ch;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:24px 0;font-size:1.12rem;color:var(--ink);
+  }
+  .thesis b{color:var(--gold-deep);}
+
+  /* growth divider seed */
+  .seed-rail{display:flex;justify-content:center;gap:10px;margin-top:30px;}
+  .seed-rail span{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--leaf-soft);opacity:.5;
+    animation:rise 3.2s ease-in-out infinite;
+  }
+  .seed-rail span:nth-child(2){animation-delay:.4s;background:var(--gold);}
+  .seed-rail span:nth-child(3){animation-delay:.8s;}
+  .seed-rail span:nth-child(4){animation-delay:1.2s;background:var(--gold);}
+  .seed-rail span:nth-child(5){animation-delay:1.6s;}
+  @keyframes rise{0%,100%{transform:translateY(4px);opacity:.35;}50%{transform:translateY(-4px);opacity:.9;}}
+
+  /* ---------- SECTION SCAFFOLD ---------- */
+  section{padding:84px 0;}
+  .sec-head{margin-bottom:40px;}
+  .sec-tag{color:var(--gold-deep);font-weight:600;}
+  .sec-head h2{font-size:clamp(1.8rem,4vw,2.7rem);margin:10px 0 14px;}
+  .sec-head p{color:var(--ink-soft);max-width:62ch;font-size:1.05rem;}
+  .tech-no{
+    display:inline-block;font-family:"SF Mono",ui-monospace,monospace;
+    font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:999px;padding:3px 12px;margin-bottom:6px;
+  }
+
+  /* ---------- TECHNIQUE 1: GUERRILLA GARDENING ---------- */
+  .garden{
+    background:
+      linear-gradient(180deg, #f1 efe2 0%, #eef1e3 0%, #e9efdd 100%);
+    background:linear-gradient(180deg,#eef1e3 0%,#e6eed7 100%);
+    position:relative;overflow:hidden;
+  }
+  .soil-line{
+    position:absolute;left:0;right:0;top:0;height:8px;
+    background:repeating-linear-gradient(90deg,var(--root) 0 14px,transparent 14px 22px);
+    opacity:.25;
+  }
+  .garden-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:18px;margin-top:8px;
+  }
+  .sprout{
+    position:relative;background:#fbfaf2;border:1px solid #d3d8bf;
+    border-radius:12px;padding:20px 18px 18px;
+    box-shadow:0 6px 18px rgba(70,80,40,.07);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .sprout:hover{transform:translateY(-5px);box-shadow:0 14px 30px rgba(70,80,40,.14);}
+  .sprout .stem{
+    position:absolute;left:24px;top:-14px;width:2px;height:14px;background:var(--leaf);
+  }
+  .sprout .leaf-mark{
+    width:26px;height:26px;border-radius:50% 0 50% 50%;
+    background:linear-gradient(135deg,var(--leaf-soft),var(--leaf));
+    transform:rotate(45deg);margin-bottom:12px;
+    box-shadow:0 2px 5px rgba(60,90,30,.25);
+  }
+  .sprout h4{font-size:1.12rem;color:var(--root);margin-bottom:6px;}
+  .sprout p{font-size:.92rem;color:var(--ink-soft);margin:0 0 12px;}
+  .spread{
+    font-size:.72rem;letter-spacing:.04em;color:var(--leaf);
+    border-top:1px dashed #cfd6ba;padding-top:9px;display:flex;gap:6px;align-items:center;
+  }
+  .spread .dot{width:6px;height:6px;border-radius:50%;background:var(--leaf);flex:none;}
+
+  /* ---------- TECHNIQUE 2: ELEMENTAL FORCES ---------- */
+  .elements{background:linear-gradient(180deg,#f6f1e7,#efe7d8);}
+  .ele-block{margin-bottom:46px;border-radius:18px;overflow:hidden;border:1px solid var(--line);}
+  .ele-banner{
+    padding:22px 26px;display:flex;align-items:center;gap:18px;color:#fff;position:relative;overflow:hidden;
+  }
+  .ele-banner h3{font-size:1.5rem;}
+  .ele-banner .ele-sub{font-size:.85rem;opacity:.92;font-style:italic;}
+  .ele-icon{width:46px;height:46px;flex:none;position:relative;}
+  .ele-body{padding:22px 26px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+  .ele-card{border-radius:10px;padding:15px 16px;background:#fffdf8;border:1px solid var(--line);}
+  .ele-card h5{font-size:1rem;margin:0 0 5px;}
+  .ele-card p{font-size:.86rem;color:var(--ink-soft);margin:0;}
+
+  /* FIRE */
+  .fire .ele-banner{background:linear-gradient(115deg,var(--fire-1),var(--fire-2));}
+  .fire .ele-body{background:var(--fire-bg);}
+  .fire .ele-card{border-color:#eccab6;}
+  .fire .ele-card h5{color:var(--fire-1);}
+  .flame{position:absolute;bottom:0;left:50%;width:22px;height:34px;transform:translateX(-50%);
+    background:radial-gradient(circle at 50% 80%,#ffe08a,#ffae3b 35%,#ff6a1f 70%);
+    border-radius:50% 50% 50% 50%/60% 60% 40% 40%;clip-path:polygon(50% 0,80% 45%,68% 100%,32% 100%,20% 45%);
+    animation:flick .9s ease-in-out infinite alternate;}
+  @keyframes flick{from{transform:translateX(-50%) scaleY(1);}to{transform:translateX(-52%) scaleY(1.18);}}
+
+  /* WATER */
+  .water .ele-banner{background:linear-gradient(115deg,var(--water-1),var(--water-2));}
+  .water .ele-body{background:var(--water-bg);}
+  .water .ele-card{border-color:#bcd9e1;}
+  .water .ele-card h5{color:var(--water-1);}
+  .drop{position:absolute;left:50%;top:6px;width:22px;height:30px;transform:translateX(-50%);
+    background:linear-gradient(160deg,#cdeef5,#7fc0d6 60%,#3d8aa6);
+    border-radius:50% 50% 50% 50%/70% 70% 40% 40%;clip-path:polygon(50% 0,82% 60%,50% 100%,18% 60%);
+    animation:bob 2.2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(4px);}}
+
+  /* EARTH */
+  .earth .ele-banner{background:linear-gradient(115deg,var(--earth-1),var(--earth-2));}
+  .earth .ele-body{background:var(--earth-bg);}
+  .earth .ele-card{border-color:#d8c8a4;}
+  .earth .ele-card h5{color:var(--earth-1);}
+  .mound{position:absolute;bottom:4px;left:50%;width:38px;height:20px;transform:translateX(-50%);
+    background:linear-gradient(180deg,#b89763,#7a5a32);border-radius:40px 40px 4px 4px;}
+  .mound::after{content:"";position:absolute;left:50%;bottom:18px;width:2px;height:12px;transform:translateX(-50%);background:var(--leaf);}
+
+  /* AIR */
+  .air .ele-banner{background:linear-gradient(115deg,var(--air-1),var(--air-2));}
+  .air .ele-body{background:var(--air-bg);}
+  .air .ele-card{border-color:#d4ccea;}
+  .air .ele-card h5{color:var(--air-1);}
+  .gust{position:absolute;top:50%;left:50%;width:40px;transform:translate(-50%,-50%);}
+  .gust span{display:block;height:3px;border-radius:3px;background:rgba(255,255,255,.85);margin:5px 0;animation:drift 2.6s ease-in-out infinite;}
+  .gust span:nth-child(1){width:100%;}
+  .gust span:nth-child(2){width:70%;animation-delay:.3s;}
+  .gust span:nth-child(3){width:88%;animation-delay:.6s;}
+  @keyframes drift{0%,100%{transform:translateX(0);opacity:.7;}50%{transform:translateX(6px);opacity:1;}}
+
+  /* ---------- TECHNIQUE 3: SHADOW PROFESSION ---------- */
+  .shadow{background:linear-gradient(180deg,#26211c,#1c1814);color:#efe7d8;}
+  .shadow .sec-head h2{color:#f6f1e7;}
+  .shadow .sec-head p{color:#c4b8a4;}
+  .shadow .sec-tag{color:var(--gold);}
+  .shadow .tech-no{border-color:#4a4138;color:#a8997f;}
+  .ledger{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:8px;}
+  .swap{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;
+    border:1px solid #3a332b;border-radius:12px;overflow:hidden;background:#221d18;
+  }
+  .swap .you{padding:14px 14px;background:linear-gradient(160deg,#2c4a3a,#22382c);}
+  .swap .them{padding:14px 14px;background:linear-gradient(160deg,#3a2d22,#2a1f17);text-align:right;}
+  .swap .vs{display:flex;align-items:center;justify-content:center;padding:0 8px;color:var(--gold);font-size:.7rem;letter-spacing:.1em;}
+  .swap h5{font-size:1rem;color:#dff0e2;margin:0 0 4px;}
+  .swap .price-free{color:#8fdcaa;font-weight:700;font-size:.8rem;letter-spacing:.05em;}
+  .swap .shadow-name{color:#e7c98a;font-size:.82rem;font-style:italic;display:block;margin-top:4px;}
+  .swap .price-x{color:#caa45c;font-weight:700;font-size:.8rem;}
+  .hero-swap{
+    grid-template-columns:1fr;text-align:center;border:1px solid var(--gold);
+    background:radial-gradient(120% 100% at 50% 0,#3a2f1d,#221d18);
+    padding:30px 24px;margin-bottom:24px;border-radius:16px;
+  }
+  .hero-swap .big-x{font-size:2.6rem;font-weight:800;color:var(--gold);line-height:1;}
+  .hero-swap h4{color:#f6f1e7;font-size:1.4rem;margin:8px 0 6px;}
+  .hero-swap p{color:#c4b8a4;max-width:52ch;margin:0 auto;}
+  .hero-swap .free-badge{
+    display:inline-block;margin-top:14px;background:#2c4a3a;color:#9fe7b8;
+    border-radius:999px;padding:6px 18px;font-size:.78rem;letter-spacing:.08em;border:1px solid #3f6b52;}
+
+  /* ---------- SYNTHESIS / FINALE ---------- */
+  .finale{
+    background:
+      radial-gradient(120% 80% at 50% 0,#fffaf0,var(--paper) 60%,var(--paper-2));
+    border-top:1px solid var(--line);
+  }
+  .finale .sec-head{text-align:center;}
+  .finale .sec-head h2{font-size:clamp(2rem,4.5vw,3rem);}
+  /* triangle */
+  .triangle-wrap{display:flex;flex-direction:column;align-items:center;margin:30px 0 60px;}
+  .triangle{position:relative;width:340px;height:300px;max-width:90vw;}
+  .tri-svg{width:100%;height:100%;}
+  .tri-node{
+    position:absolute;text-align:center;width:160px;
+    background:#fffdf8;border:1px solid var(--gold);border-radius:12px;padding:10px 12px;
+    box-shadow:0 8px 22px rgba(140,97,26,.14);
+  }
+  .tri-node h5{font-size:.95rem;color:var(--gold-deep);margin:0 0 3px;}
+  .tri-node p{font-size:.74rem;color:var(--ink-soft);margin:0;}
+  .tri-a{top:-18px;left:50%;transform:translateX(-50%);}
+  .tri-b{bottom:-12px;left:-30px;}
+  .tri-c{bottom:-12px;right:-30px;}
+  .tri-center{
+    position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);
+    width:118px;height:118px;border-radius:50%;
+    background:radial-gradient(circle,var(--gold),var(--gold-deep));
+    color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:.82rem;padding:14px;line-height:1.25;
+    box-shadow:0 10px 30px rgba(140,97,26,.35);
+  }
+
+  .insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+  .insight{
+    background:#fffdf8;border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:12px;padding:22px 22px;box-shadow:0 6px 20px rgba(120,90,40,.07);
+  }
+  .insight .ik{font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;color:var(--gold-deep);}
+  .insight h4{font-size:1.15rem;margin:8px 0 8px;color:var(--ink);}
+  .insight p{font-size:.94rem;color:var(--ink-soft);margin:0;}
+  .insight.suite{border-left-color:var(--root);}
+  .insight.suite .ik{color:var(--root);}
+  .suite-chain{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .suite-chain span{background:#efe6d4;border:1px solid #d8c8a4;border-radius:8px;padding:4px 10px;font-size:.78rem;color:var(--earth-1);}
+  .insight.sleeper{border-left-color:var(--air-1);background:linear-gradient(160deg,#fffdf8,#f3eff8);}
+  .insight.sleeper .ik{color:var(--air-1);}
+  .sleeper-badge{display:inline-block;margin-top:10px;font-size:.72rem;letter-spacing:.08em;background:var(--air-1);color:#fff;border-radius:999px;padding:4px 12px;}
+
+  .closer{text-align:center;max-width:60ch;margin:40px auto 0;}
+  .closer p{font-size:1.2rem;font-style:italic;color:var(--ink);}
+  .closer .by{margin-top:24px;color:var(--ink-soft);font-size:.85rem;letter-spacing:.04em;}
+
+  footer{padding:46px 0;text-align:center;color:var(--ink-soft);font-size:.8rem;border-top:1px solid var(--line);background:var(--paper-2);}
+  footer .marks{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:8px;}
+  footer .marks span{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;}
+
+  @media (max-width:560px){
+    .swap{grid-template-columns:1fr;}
+    .swap .them{text-align:left;}
+    .swap .vs{padding:6px 0;}
+    .tri-b{left:-8px;}.tri-c{right:-8px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================== HERO ====================== -->
+<header class="hero">
+  <div class="glow"></div>
+  <div class="wrap hero-inner">
+    <div class="eyebrow small-caps">A Brainstorm Keepsake &middot; 31 May 2026</div>
+    <h1>Where AI Finally Meets a Real Life Moment</h1>
+    <p class="sub">Not another prompt pack. The thing that makes AI legible and valuable to ordinary people at the moments that matter most.</p>
+
+    <p class="topic"><strong>Topic:</strong> New BMad Builder modules for net-new verticals outside software engineering. <br>
+    <strong>Goal:</strong> Expand the BMad ecosystem into other verticals, differentiate from generic prompt packs, and unlock AI's value for people who don't yet realize what it can do for them.</p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="n">49</div><div class="l">module ideas</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">techniques</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">unifying triangle</div></div>
+    </div>
+
+    <div class="thesis">
+      Every strong module does three things at once: it <b>replaces an expensive, gatekept human expert</b>, it <b>rides a charged life transition</b>, and it often <b>spreads privately, underground, person to person</b>.
+    </div>
+
+    <div class="seed-rail" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ====================== TECHNIQUE 1: GUERRILLA GARDENING ====================== -->
+<section class="garden">
+  <div class="soil-line" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tech-no">TECHNIQUE 01</span><br>
+      <span class="sec-tag small-caps">Guerrilla Gardening Ideas</span>
+      <h2>Plant where no one expects. Let the roots spread underground.</h2>
+      <p>Twelve modules that are not advertised so much as passed hand to hand: at funeral homes, in recovery rooms, across immigrant communities and gaming tables. They grow where the soil is hard and the gatekeepers are absent.</p>
+    </div>
+
+    <div class="garden-grid">
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Last Wishes</h4>
+        <p>Estate, funeral, obituary and digital-account closure for the dying or the grieving.</p>
+        <div class="spread"><span class="dot"></span>Spreads via funeral homes and private word of mouth</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Divorce Navigator</h4>
+        <p>Co-parenting plans, asset-split worksheets, BIFF-method message drafting, a document organizer.</p>
+        <div class="spread"><span class="dot"></span>Passed person to person</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Dungeon Master's Forge</h4>
+        <p>TTRPG campaign architect: worldbuild to NPCs to encounters to a live session-runner.</p>
+        <div class="spread"><span class="dot"></span>Spreads inside gaming groups</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Homestead Planner</h4>
+        <p>Crop rotation, livestock schedules, canning and preserving, off-grid energy sizing.</p>
+        <div class="spread"><span class="dot"></span>Roots in rural communities</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Sober Companion</h4>
+        <p>Daily check-ins, trigger mapping, step-work coaching, sponsor-message drafts.</p>
+        <div class="spread"><span class="dot"></span>Spreads anonymously by design</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Wedding Command</h4>
+        <p>Budget, vendor briefs, timeline, seating, vow drafts, a day-of run-of-show.</p>
+        <div class="spread"><span class="dot"></span>Brides pass it around forums</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Visa Journey</h4>
+        <p>Checklist by visa type, document prep, interview rehearsal, a timeline tracker.</p>
+        <div class="spread"><span class="dot"></span>Spreads in immigrant communities</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Pro Se Counsel</h4>
+        <p>Organize a small-claims or self-rep case, draft filings, prep arguments.</p>
+        <div class="spread"><span class="dot"></span>Grows where lawyers are unaffordable</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Pop-Up Kitchen</h4>
+        <p>Supper-club and pop-up restaurant: menu, costing, permits, guest comms.</p>
+        <div class="spread"><span class="dot"></span>Literally guerrilla dining</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Family Roots</h4>
+        <p>Genealogy quest, research plan, elder-interview scripts, tree-building, reunion planning.</p>
+        <div class="spread"><span class="dot"></span>Carried down family lines</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Block Aid</h4>
+        <p>Neighborhood mutual-aid organizer: resource mapping, volunteer roster, comms.</p>
+        <div class="spread"><span class="dot"></span>Spreads block by block</div>
+      </div>
+
+      <div class="sprout"><div class="stem"></div><div class="leaf-mark"></div>
+        <h4>Reentry Roadmap</h4>
+        <p>Post-incarceration housing search, resume-the-gap, benefits, a first-90-days plan.</p>
+        <div class="spread"><span class="dot"></span>Carried through reentry networks</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================== TECHNIQUE 2: ELEMENTAL FORCES ====================== -->
+<section class="elements">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tech-no">TECHNIQUE 02</span><br>
+      <span class="sec-tag small-caps">Elemental Forces</span>
+      <h2>Four elements, four kinds of human moment.</h2>
+      <p>Twenty-two modules sorted by the force they answer to. Fire is the crisis you did not choose. Water is the slow, patient current. Earth is the foundation you build to last. Air is the voice you finally find.</p>
+    </div>
+
+    <!-- FIRE -->
+    <div class="ele-block fire">
+      <div class="ele-banner">
+        <div class="ele-icon"><div class="flame"></div></div>
+        <div><h3>Fire</h3><div class="ele-sub">The sudden crisis: it burns now, and it cannot wait.</div></div>
+      </div>
+      <div class="ele-body">
+        <div class="ele-card"><h5>Ashes to Action</h5><p>House-fire and disaster aftermath: insurance claim, FEMA, document recovery, rebuild sequencing.</p></div>
+        <div class="ele-card"><h5>Debt War Room</h5><p>Avalanche and snowball plan, creditor-negotiation scripts, a payoff-urgency dashboard.</p></div>
+        <div class="ele-card"><h5>30-Day Relaunch</h5><p>Layoff recovery: grieve fast, target list, outreach campaign, interview sprints.</p></div>
+        <div class="ele-card"><h5>Heartbreak Reset</h5><p>Breakup recovery: no-contact plan, reframe exercises, rebuild-your-week structure.</p></div>
+        <div class="ele-card"><h5>Cool the Fire</h5><p>Anger and conflict de-escalation coach: trigger map, scripts, repair conversations.</p></div>
+      </div>
+    </div>
+
+    <!-- WATER -->
+    <div class="ele-block water">
+      <div class="ele-banner">
+        <div class="ele-icon"><div class="drop"></div></div>
+        <div><h3>Water</h3><div class="ele-sub">The long, patient current: it shapes you drop by drop.</div></div>
+      </div>
+      <div class="ele-body">
+        <div class="ele-card"><h5>Tiny Currents</h5><p>Habit-formation engine: shrink the habit, anchor it, track the erosion of the old one.</p></div>
+        <div class="ele-card"><h5>Chronic Companion</h5><p>Chronic-illness management: symptom log, visit prep, med schedule, flare playbook.</p></div>
+        <div class="ele-card"><h5>Still Waters</h5><p>Meditation and mindfulness program tuned to your personal stress signature.</p></div>
+        <div class="ele-card"><h5>The Long Draft</h5><p>Novel-writing module: premise to outline to chapter drafts to revision passes over months.</p></div>
+        <div class="ele-card"><h5>Tending Elders</h5><p>Aging-parent caregiving: care plan, appointment coordination, sibling comms, the slow adapt.</p></div>
+      </div>
+    </div>
+
+    <!-- EARTH -->
+    <div class="ele-block earth">
+      <div class="ele-banner">
+        <div class="ele-icon"><div class="mound"></div></div>
+        <div><h3>Earth</h3><div class="ele-sub">The foundation: solid, structural, built to outlast you.</div></div>
+      </div>
+      <div class="ele-body">
+        <div class="ele-card"><h5>Bedrock Budget</h5><p>Personal-finance foundation: budget, emergency fund, debt order, retirement basics.</p></div>
+        <div class="ele-card"><h5>Build It Right</h5><p>Home renovation and DIY: scope, material lists, permits, contractor briefs, sequencing.</p></div>
+        <div class="ele-card"><h5>Living Soil</h5><p>Permaculture and garden designer: site read, plant-guild plans, season calendar.</p></div>
+        <div class="ele-card"><h5>Generational Vault</h5><p>Estate and generational-wealth foundation: wills, trusts, beneficiary mapping, the family talk.</p></div>
+        <div class="ele-card"><h5>Main Street</h5><p>Non-tech small-business founder (bakery, salon, landscaping): plan, licensing, ops, first hires.</p></div>
+        <div class="ele-card"><h5>First Door</h5><p>First rental-property investing: deal analysis, financing, tenant systems.</p></div>
+      </div>
+    </div>
+
+    <!-- AIR -->
+    <div class="ele-block air">
+      <div class="ele-banner">
+        <div class="ele-icon"><div class="gust"><span></span><span></span><span></span></div></div>
+        <div><h3>Air</h3><div class="ele-sub">The voice and the horizon: expression, movement, reach.</div></div>
+      </div>
+      <div class="ele-body">
+        <div class="ele-card"><h5>Take the Stage</h5><p>Public-speaking and TEDx builder: idea-of-the-talk, arc, slides, rehearsal coaching.</p></div>
+        <div class="ele-card"><h5>On Air</h5><p>Podcast launch for non-tech creators: format, gear, booking, episode pipeline.</p></div>
+        <div class="ele-card"><h5>Open Road</h5><p>Sabbatical, gap-year and long-trip planner: budget, route, logistics, reentry.</p></div>
+        <div class="ele-card"><h5>Hard Talk</h5><p>Negotiation and difficult-conversations module: prep, scripts, BATNA, debrief.</p></div>
+        <div class="ele-card"><h5>Fluent Fast</h5><p>Language-immersion plan: daily flow, comprehensible-input schedule, speaking reps.</p></div>
+        <div class="ele-card"><h5>The Toast</h5><p>Wedding, eulogy and occasion-speech writer with delivery coaching.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================== TECHNIQUE 3: THE SHADOW PROFESSION ====================== -->
+<section class="shadow">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tech-no">TECHNIQUE 03 &middot; INVENTED</span><br>
+      <span class="sec-tag small-caps">The Shadow Profession</span>
+      <h2>Name the expensive expert. Then give away their first hour for free.</h2>
+      <p>Each module is built against a specific gatekept professional, the one most people can never afford to hire. The module delivers their magic, the part that used to cost hundreds an hour, on the first run, for free.</p>
+    </div>
+
+    <!-- hero swap -->
+    <div class="hero-swap">
+      <div class="big-x">$5,000</div>
+      <h4>The 5k Essay</h4>
+      <p>The college-admissions consultant builds a school list, shapes the activities resume, coaches every essay, walks the FAFSA, and rides the deadline tracker. A few families can write that check. Now every family can run the module.</p>
+      <span class="free-badge">SHADOW: college admissions consultant &rarr; free first hour</span>
+    </div>
+
+    <div class="ledger">
+
+      <div class="swap">
+        <div class="you"><h5>Pocket Advisor</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Financial planner</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Life by Design</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Life coach + therapist intake</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Redesign My Room</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Interior designer</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>New Manager OS</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Executive coach</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Style Me</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Image consultant</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Birth Plan</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Doula + childbirth educator</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Home Class</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Tutor + homeschool consultant</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Good Dog</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Dog trainer + behaviorist</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Job Hunt HQ</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Career coach</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Spark Joy</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Professional organizer</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Practice Coach</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Music teacher</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Rehab Protocol</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Physical therapist</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>The Sommelier Table</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Chef + sommelier</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+      <div class="swap">
+        <div class="you"><h5>Tax Year Sorted</h5><span class="price-free">FREE / LOCAL</span></div>
+        <div class="vs">vs</div>
+        <div class="them"><span class="shadow-name">Tax preparer</span><span class="price-x">$$$ / hr</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================== SYNTHESIS / FINALE ====================== -->
+<section class="finale">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-tag small-caps">The Synthesis</span>
+      <h2>What all 49 ideas were quietly pointing at.</h2>
+    </div>
+
+    <!-- THE TRIANGLE -->
+    <div class="triangle-wrap">
+      <div class="triangle">
+        <svg class="tri-svg" viewBox="0 0 340 300" aria-hidden="true">
+          <polygon points="170,40 36,260 304,260" fill="rgba(184,134,43,.08)" stroke="#b8862b" stroke-width="2"/>
+        </svg>
+        <div class="tri-node tri-a"><h5>Gatekept expertise</h5><p>An expensive expert most people cannot hire.</p></div>
+        <div class="tri-node tri-b"><h5>Charged life moment</h5><p>A transition with real emotional weight.</p></div>
+        <div class="tri-node tri-c"><h5>Reason to keep it private</h5><p>Intimate, stigmatized, or yours alone.</p></div>
+        <div class="tri-center">The space a prompt pack structurally cannot occupy</div>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+
+      <div class="insight">
+        <div class="ik">The Moat</div>
+        <h4>Expensive expert plus emotional charge</h4>
+        <p>The strongest non-SWE modules all replace a gatekept human expert AND carry a life-transition charge. That combination, not the prompts, is the moat against generic prompt packs.</p>
+      </div>
+
+      <div class="insight">
+        <div class="ik">Distribution as a feature</div>
+        <h4>Privacy-first is why it spreads</h4>
+        <p>Many top ideas (divorce, sobriety, immigration, pro-se) spread underground precisely because they are private or stigmatized. Local, privacy-first AI is not a constraint here. It is the selling point.</p>
+      </div>
+
+      <div class="insight suite">
+        <div class="ik">Build as one suite</div>
+        <h4>The End-of-Life journey nobody owns</h4>
+        <p>Three modules are secretly one category. Connect them into a single journey that walks a family from caregiving through inheritance to final wishes.</p>
+        <div class="suite-chain"><span>Tending Elders</span><span>&rarr;</span><span>Generational Vault</span><span>&rarr;</span><span>Last Wishes</span></div>
+      </div>
+
+      <div class="insight">
+        <div class="ik">A reusable lens</div>
+        <h4>The Shadow Profession as moat-detector</h4>
+        <p>Run it over every future idea. If a module cannot name the expensive expert it replaces, it is a prompt pack, not a BMad module. Keep it as a permanent qualifying test.</p>
+      </div>
+
+      <div class="insight sleeper">
+        <div class="ik">Sleeper pick</div>
+        <h4>Dungeon Master's Forge: the first public demo</h4>
+        <p>The most visibly magical demonstration of multi-agent structure to a newcomer, and it spreads through evangelist hobbyist communities. Possibly the best first thing to show the world.</p>
+        <span class="sleeper-badge">DEMO CANDIDATE</span>
+      </div>
+
+      <div class="insight">
+        <div class="ik">The unifying spec</div>
+        <h4>The triangle, stated plainly</h4>
+        <p>Gatekept expensive expertise + a charged life moment + a reason to keep it private. That is the catalog's north star, and the exact territory a generic prompt pack can never reach.</p>
+      </div>
+
+    </div>
+
+    <div class="closer">
+      <p>"BMad is not selling prompts. It is handing ordinary people the expert they could never afford, at the exact moment their life is on the line."</p>
+      <div class="by small-caps">Brainstorm session &middot; autonomous mode &middot; complete</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>New BMad Builder modules for net-new verticals outside software engineering</div>
+    <div class="marks">
+      <span>49 IDEAS</span>
+      <span>GUERRILLA GARDENING</span>
+      <span>ELEMENTAL FORCES</span>
+      <span>THE SHADOW PROFESSION</span>
+      <span>2026-05-31</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

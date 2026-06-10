@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Discharge Almanac — A Brainstorm</title>
+<style>
+  :root{
+    --paper:#f6f1e7; --ink:#28333d; --rule:#c9bda4;
+    --stamp:#b34a3a; --stamp2:#3d6b6b; --gold:#c9a14a;
+    --green:#5b8c5a; --amber:#d39a3c; --red:#bf4632;
+    --shadow:0 2px 0 rgba(0,0,0,.04),0 14px 40px rgba(40,51,61,.10);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(circle at 20% 0,#fbf7ee,transparent 60%),
+      radial-gradient(circle at 90% 30%,#f1ead9,transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 26px 90px}
+  a{color:var(--stamp2)}
+
+  /* ---- Letterhead ---- */
+  header.head{
+    text-align:center;border:3px double var(--ink);
+    padding:34px 24px 28px;background:rgba(255,255,255,.45);
+    box-shadow:var(--shadow);position:relative;border-radius:4px;
+  }
+  .head .eyebrow{letter-spacing:.42em;text-transform:uppercase;font-size:12px;color:#7d7361;margin-bottom:14px}
+  .head h1{font-size:clamp(34px,6vw,62px);margin:0;line-height:1.02;font-weight:700}
+  .head h1 .sub{display:block;font-size:.34em;letter-spacing:.06em;color:#8a7d63;font-style:italic;margin-top:14px;font-weight:400}
+  .head .meta{margin-top:22px;font-size:13px;color:#7d7361;font-style:italic}
+  .stamp{
+    position:absolute;top:-18px;right:-14px;transform:rotate(9deg);
+    border:2.5px solid var(--stamp);color:var(--stamp);border-radius:50%;
+    width:104px;height:104px;display:flex;align-items:center;justify-content:center;
+    text-align:center;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    background:rgba(246,241,231,.7);font-weight:700;line-height:1.25;
+    box-shadow:0 0 0 4px rgba(179,74,58,.08) inset;
+  }
+  .pulse{
+    margin:30px auto 0;max-width:560px;height:40px;
+  }
+  .pulse svg{width:100%;height:40px;display:block}
+
+  /* ---- Intro ---- */
+  .lede{font-size:18px;text-align:center;max-width:680px;margin:34px auto 6px;color:#43423a}
+  .toc{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 0}
+  .toc a{
+    text-decoration:none;font-size:12.5px;letter-spacing:.04em;
+    border:1px solid var(--rule);padding:7px 14px;border-radius:30px;
+    background:rgba(255,255,255,.5);color:var(--ink);transition:.15s;
+  }
+  .toc a:hover{background:var(--ink);color:var(--paper)}
+
+  /* ---- Section scaffolding ---- */
+  section{margin-top:64px;scroll-margin-top:20px}
+  .sechead{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+  .secnum{font-size:13px;letter-spacing:.3em;color:#9a8d72;font-weight:700}
+  .sectitle{font-size:clamp(24px,4vw,36px);margin:0;font-weight:700}
+  .sectool{margin-left:auto;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--ink);padding:5px 12px;border-radius:3px;white-space:nowrap}
+  .secblurb{font-style:italic;color:#6f6855;margin:14px 0 26px;font-size:16px}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .card{
+    background:#fffdf8;border:1px solid var(--rule);border-radius:6px;
+    padding:16px 18px;box-shadow:var(--shadow);position:relative;font-size:15px;
+  }
+  .card .tag{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:9px;font-weight:700}
+
+  /* ---- 1. FIVE WHYS — root system diagram ---- */
+  .roots{background:#1f2a2e;color:#e9e1cf;border-radius:10px;padding:26px 22px;margin-bottom:26px}
+  .roots .why{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-left:2px dashed #5c7068;margin-left:8px;padding-left:18px;position:relative}
+  .roots .why::before{content:"";position:absolute;left:-6px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+  .roots .why .lvl{font-size:11px;letter-spacing:.2em;color:#9fb8a8;min-width:62px;padding-top:3px}
+  .roots .why .txt{font-size:14.5px}
+  .roots .root{margin-top:8px;background:var(--stamp);color:#fff;border-radius:6px;padding:12px 16px;font-weight:700}
+  .roots .root small{display:block;font-weight:400;font-style:italic;color:#ffe3dd;letter-spacing:.04em;margin-top:3px}
+  .whychips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .whychips span{font-size:11px;background:#33424a;color:#cfe0d6;padding:5px 11px;border-radius:20px;letter-spacing:.05em}
+  .tag-why{background:var(--stamp)}
+
+  /* ---- 2. METAMORPHOSIS — stages ---- */
+  .stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;margin-bottom:8px;border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+  .stage{padding:20px 18px;border-right:1px solid var(--rule);background:linear-gradient(180deg,#fffdf8,#f4eedf)}
+  .stage:last-child{border-right:none}
+  .stage .glyph{font-size:34px;line-height:1}
+  .stage h4{margin:8px 0 2px;font-size:18px}
+  .stage .when{font-size:12px;color:#8a7d63;font-style:italic;letter-spacing:.04em}
+  .stage .arc{font-size:13px;color:#5a6f55;margin-top:8px}
+  .tag-meta{background:var(--green)}
+
+  /* ---- 3. DISNEY — three rooms ---- */
+  .rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+  @media(max-width:760px){.rooms{grid-template-columns:1fr}}
+  .room{border-radius:10px;padding:18px;color:#fff;box-shadow:var(--shadow)}
+  .room.dreamer{background:linear-gradient(160deg,#7a6cb0,#574a8c)}
+  .room.realist{background:linear-gradient(160deg,#3d7a78,#2c5755)}
+  .room.critic{background:linear-gradient(160deg,#a4503f,#7c3527)}
+  .room h4{margin:0 0 4px;font-size:20px;letter-spacing:.02em}
+  .room .role{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  .room p{font-size:13.5px;margin:10px 0 0;opacity:.95}
+  .tag-disney{background:#574a8c}
+  .survivor{
+    background:linear-gradient(120deg,#fff6e0,#fbe9c4);border:2px solid var(--gold);
+    border-radius:10px;padding:18px 22px;font-size:16px;box-shadow:var(--shadow);
+  }
+  .survivor .crown{font-size:30px}
+
+  /* ---- 4. FUTURE SELF — testimony ---- */
+  .voices{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:8px}
+  @media(max-width:760px){.voices{grid-template-columns:1fr}}
+  .voice{background:#fffdf8;border:1px solid var(--rule);border-radius:10px;padding:20px;box-shadow:var(--shadow)}
+  .voice .who{display:flex;align-items:center;gap:12px;border-bottom:1px dashed var(--rule);padding-bottom:12px;margin-bottom:8px}
+  .voice .av{width:46px;height:46px;border-radius:50%;background:var(--stamp2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .voice .av.nurse{background:var(--stamp)}
+  .voice .who b{font-size:16px}
+  .voice .who span{display:block;font-size:12px;color:#8a7d63;font-style:italic}
+  .quote{font-size:14.5px;padding:9px 0 9px 16px;border-left:3px solid var(--gold);margin:10px 0;font-style:italic;color:#43423a}
+  .quote b{font-style:normal;color:var(--ink)}
+  .tag-future{background:var(--stamp2)}
+
+  /* ---- SYNTHESIS climax ---- */
+  .climax{
+    margin-top:80px;border-radius:16px;padding:40px 30px;
+    background:radial-gradient(circle at 30% 0,#26323a,#161e23);
+    color:#f3ecda;box-shadow:0 30px 70px rgba(20,28,33,.4);position:relative;overflow:hidden;
+  }
+  .climax::before{content:"";position:absolute;inset:0;background:
+    repeating-linear-gradient(135deg,rgba(201,161,74,.05)0 2px,transparent 2px 26px);pointer-events:none}
+  .climax h2{font-size:clamp(28px,5vw,46px);margin:0;text-align:center;letter-spacing:.01em}
+  .climax .sub{text-align:center;color:#c9a14a;font-style:italic;letter-spacing:.08em;margin:8px 0 30px}
+  .keystone{
+    background:linear-gradient(120deg,#c9a14a,#a8842f);color:#1c2429;border-radius:12px;
+    padding:24px 26px;margin:0 auto 28px;max-width:760px;position:relative;box-shadow:0 14px 40px rgba(201,161,74,.25)
+  }
+  .keystone .k{font-size:12px;letter-spacing:.24em;text-transform:uppercase;font-weight:700}
+  .keystone h3{margin:6px 0 8px;font-size:24px}
+  .keystone p{margin:0;font-size:15.5px}
+  .insights{display:grid;grid-template-columns:1fr 1fr;gap:16px;position:relative}
+  @media(max-width:760px){.insights{grid-template-columns:1fr}}
+  .ins{background:rgba(255,255,255,.05);border:1px solid rgba(201,161,74,.3);border-radius:10px;padding:18px 20px}
+  .ins h4{margin:0 0 8px;font-size:16px;color:#e8c878;display:flex;gap:8px;align-items:baseline}
+  .ins h4 i{font-style:normal;font-size:18px}
+  .ins p{margin:0;font-size:14px;color:#ded7c5}
+  .ins.wild{border-color:var(--stamp);background:rgba(179,74,58,.12)}
+  .ins.wild h4{color:#f0a392}
+
+  footer{text-align:center;margin-top:64px;color:#8a7d63;font-size:12.5px;font-style:italic}
+  footer .rule{height:1px;background:var(--rule);margin:0 auto 18px;max-width:200px}
+  .count{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="stamp">Discharged<br>with<br>Intention</div>
+    <div class="eyebrow">A Solo Brainstorm · No Software Allowed</div>
+    <h1>The Discharge Almanac
+      <span class="sub">redesigning the walk from the hospital bed to the first night home</span>
+    </h1>
+    <div class="meta">Compiled 31 May 2026 · 62 ideas across four creative instruments · autonomous session</div>
+    <div class="pulse" aria-hidden="true">
+      <svg viewBox="0 0 560 40" preserveAspectRatio="none">
+        <polyline points="0,20 120,20 150,20 165,6 180,34 200,20 320,20 345,20 360,9 372,31 388,20 560,20"
+          fill="none" stroke="#b34a3a" stroke-width="2.4"/>
+      </svg>
+    </div>
+  </header>
+
+  <p class="lede">Today, discharge is a rushed paperwork dump handed to a foggy, relieved patient who wants to go home. This almanac asks: what if the walk out the door were the most carefully designed hour of the whole stay? Four instruments, no screens — only people, paper, ritual, and the physical handoff.</p>
+
+  <nav class="toc">
+    <a href="#whys">① Five Whys</a>
+    <a href="#meta">② Metamorphosis</a>
+    <a href="#disney">③ Disney Method</a>
+    <a href="#future">④ Future Selves</a>
+    <a href="#synth">✦ The Synthesis</a>
+  </nav>
+
+  <!-- ===================== 1. FIVE WHYS ===================== -->
+  <section id="whys">
+    <div class="sechead">
+      <span class="secnum">INSTRUMENT ①</span>
+      <h2 class="sectitle">Five Whys: Digging to the Root</h2>
+      <span class="sectool">Deep · Root-Cause</span>
+    </div>
+    <p class="secblurb">We dropped a shaft beneath seven different failures and kept asking <em>why</em> until we hit bedrock — then aimed the interventions at the root, not the symptom.</p>
+
+    <div class="roots">
+      <div class="whychips">
+        <span>A · plan ignored</span><span>B · meds confused</span><span>C · missed follow-up</span>
+        <span>D · "yes I understand" (lie)</span><span>E · rough first night</span>
+        <span>F · caregiver fails</span><span>G · paperwork dump</span>
+      </div>
+      <div class="why"><span class="lvl">WHY 1</span><span class="txt">The patient doesn't follow the plan…</span></div>
+      <div class="why"><span class="lvl">WHY 2</span><span class="txt">…because they never understood it.</span></div>
+      <div class="why"><span class="lvl">WHY 3</span><span class="txt">…taught verbally at the worst moment — foggy, relieved, halfway out the door.</span></div>
+      <div class="why"><span class="lvl">WHY 4</span><span class="txt">…and nobody confirmed they understood.</span></div>
+      <div class="why"><span class="lvl">WHY 5</span><span class="txt">…because the ward measures bed-turnover, not comprehension.</span></div>
+      <div class="root">ROOT: Success is defined as the bed emptying — not the patient understanding.
+        <small>Every other why-chain rhymes: we discharge paper into a kitchen we never see; treat discharge as an ending not a handoff; let shame suppress the saving question; prepare for the ideal recovery, never the rough patch; teach the patient instead of the caregiver who does the work; and write the document to protect the hospital, not to be used by a human at home.</small>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><span class="tag tag-why">close the loop</span>Discharge isn't "complete" until the patient <b>teaches the plan back</b> in their own words — the bed isn't marked clean until the loop closes.</div>
+      <div class="card"><span class="tag tag-why">bedside</span>An <b>"Understanding Stoplight"</b> magnet board: green only when meds, warning signs &amp; follow-up are re-explained unaided. No discharging a red or yellow.</div>
+      <div class="card"><span class="tag tag-why">timing</span>Move teaching to <b>24–48h before</b> discharge — a scheduled "Recovery Rehearsal" on the whiteboard like any other treatment.</div>
+      <div class="card"><span class="tag tag-why">metric</span>Replace time-to-empty-bed on the dashboard with a visible <b>"7-day stay-home rate"</b> — reward recovery, not turnover.</div>
+      <div class="card"><span class="tag tag-why">meds</span>Home with a <b>7-day pill organizer</b> physically filled &amp; sealed by the ward pharmacist — plus a stamped bag to <b>mail back</b> every discontinued bottle.</div>
+      <div class="card"><span class="tag tag-why">meds</span><b>"Brown Bag Amnesty":</b> family brings every bottle from home to the bedside; pharmacist sorts keep/toss on the tray table while the patient watches.</div>
+      <div class="card"><span class="tag tag-why">meds</span><b>Color-coded meds:</b> each new drug gets a colored sticker matching a slot on the take-home tray and a line on the one-page plan. Match colors, take the dose.</div>
+      <div class="card"><span class="tag tag-why">handoff</span>No one leaves without the follow-up <b>already booked on a physical card</b> — date, time, address, a named human — printed like a boarding pass.</div>
+      <div class="card"><span class="tag tag-why">handoff</span>A non-clinical <b>Recovery Coach</b> (trained volunteer / community health worker) named &amp; introduced in person, who phones at 48h. A face, not a hotline.</div>
+      <div class="card"><span class="tag tag-why">handoff</span>The nurse writes a <b>hand-written note to the GP</b> the patient physically carries &amp; delivers — making the patient the courier creates a reason to go.</div>
+      <div class="card"><span class="tag tag-why">shame</span>Flip teach-back: the <b>nurse plays confused</b> — "I get this wrong sometimes, can you show ME so I can check my explanation?" Moves shame off the patient.</div>
+      <div class="card"><span class="tag tag-why">shame</span>Three physical <b>"Dumb Question Tokens"</b> on a ring at admission. Spending them is a win — normalizes asking, removes the white-coat gradient.</div>
+      <div class="card"><span class="tag tag-why">shame</span>A <b>"Questions People Always Forget to Ask"</b> card the patient reads aloud — asking becomes following instructions, not admitting ignorance.</div>
+      <div class="card"><span class="tag tag-why">shame</span>Teaching by a recently-discharged <b>peer "graduate patient"</b> in plain language, no white coat — collapses the power gradient entirely.</div>
+      <div class="card"><span class="tag tag-why">rough night</span>A <b>"What If It Goes Wrong Tonight"</b> card: the 5 likely scary-but-normal events for this surgery, what to do, and the exact words to say when you call.</div>
+      <div class="card"><span class="tag tag-why">rough night</span><b>Worst-night rehearsal:</b> "it's 2am, your wound looks red, you're scared — show me what you do," and the patient physically walks through it.</div>
+      <div class="card"><span class="tag tag-why">rough night</span>A fridge-magnet <b>traffic-light symptom card</b> for THIS condition — green/expect this, yellow/call the coach, red/call 911 — posted where panic happens.</div>
+      <div class="card"><span class="tag tag-why">caregiver</span>Discharge can't be scheduled until the <b>named caregiver is present</b> (or on speakerphone) for teaching — and the carer signs the teach-back too.</div>
+      <div class="card"><span class="tag tag-why">caregiver</span>A printed <b>"Caregiver Job Card"</b> naming one person for meds, one for appointments, one for warning signs — assign roles like a pit crew.</div>
+      <div class="card"><span class="tag tag-why">caregiver</span>Send the carer home with a <b>"shift handover" sheet (SBAR-style)</b> — the family receives care the way nurses hand off to each other.</div>
+      <div class="card"><span class="tag tag-why">paperwork</span>Physically split the paper: a thick <b>legal envelope</b> that gets filed, and a single laminated <b>"This Is What You Actually Do"</b> card for the fridge.</div>
+      <div class="card"><span class="tag tag-why">paperwork</span>The one-page plan, 6th-grade level with pictures; the patient <b>initials each line</b> as the nurse reads it — a dump becomes a co-signed checklist.</div>
+      <div class="card"><span class="tag tag-why">paperwork</span>Print the plan on a <b>paper placemat</b> — meds, next dose times, and warning signs literally under the first home dinner.</div>
+    </div>
+  </section>
+
+  <!-- ===================== 2. METAMORPHOSIS ===================== -->
+  <section id="meta">
+    <div class="sechead">
+      <span class="secnum">INSTRUMENT ②</span>
+      <h2 class="sectitle">Metamorphosis: Egg → Larva → Pupa → Adult</h2>
+      <span class="sectool">Biomimetic</span>
+    </div>
+    <p class="secblurb">We forced the recovery journey through four radically different bodies — each demanding its own artifact and its own human touch.</p>
+
+    <div class="stages">
+      <div class="stage"><div class="glyph">🥚</div><h4>Egg</h4><div class="when">still in bed, days before</div><div class="arc">incubation: warmth, protection, slow build — plant the plan early.</div></div>
+      <div class="stage"><div class="glyph">🐛</div><h4>Larva</h4><div class="when">the chaotic leaving hour</div><div class="arc">hungry, fast, messy — gather every resource before the threshold.</div></div>
+      <div class="stage"><div class="glyph">🛡️</div><h4>Pupa</h4><div class="when">threshold &amp; first hours home</div><div class="arc">fragile, dissolving, reforming — build a protective cocoon.</div></div>
+      <div class="stage"><div class="glyph">🦋</div><h4>Adult</h4><div class="when">weeks later, flying</div><div class="arc">emergence &amp; proof — celebrate, prevent relapse, close the loop.</div></div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><span class="tag tag-meta">egg</span>A <b>"Recovery starts today" wristband</b> swap — the moment planning begins (not discharge day), staff see the band and start teaching in daily doses.</div>
+      <div class="card"><span class="tag tag-meta">egg</span>A bedside <b>"Recovery Almanac"</b> notebook patient &amp; visitors write into all week — by discharge they own a personal record, not a generic leaflet.</div>
+      <div class="card"><span class="tag tag-meta">egg</span><b>One lesson a day</b> with the meal tray — today your meds, tomorrow your wound, next your warning signs — instead of cramming the last hour.</div>
+      <div class="card"><span class="tag tag-meta">egg</span>A daily <b>"incubation card"</b> on the pillow each morning with one tiny task to practice in bed — e.g. "draw up and time your own doses today, nurse watching."</div>
+      <div class="card"><span class="tag tag-meta">larva</span>A real <b>"Discharge Backpack"</b> (not a flimsy bag) packed in front of the patient: meds, plan, appointment pass, coach card, sample dressings — a survival kit they watch assembled.</div>
+      <div class="card"><span class="tag tag-meta">larva</span>A <b>"Leaving Checklist"</b> taped to the door the patient ticks and the nurse co-signs — like a pilot's pre-flight. No unticked box walks out.</div>
+      <div class="card"><span class="tag tag-meta">larva</span>A 90-second <b>"doorway huddle":</b> patient, nurse &amp; caregiver at the threshold, the 3 things that matter said out loud and repeated — a ritual that marks crossing over.</div>
+      <div class="card"><span class="tag tag-meta">larva</span>A <b>"warm handoff walk"</b> — the same nurse walks the patient to the car (not a porter), using those minutes for the final real conversation.</div>
+      <div class="card"><span class="tag tag-meta">pupa</span>A <b>"First Night Box"</b> carried home: a labeled meal, the next 24h of meds pre-sorted by time, a nightlight, the worst-night card, and "do only these 4 things tonight."</div>
+      <div class="card"><span class="tag tag-meta">pupa</span>A scheduled <b>"landing call"</b> at the exact hour they get home: "you're home — let's walk through the next 12 hours together right now."</div>
+      <div class="card"><span class="tag tag-meta">pupa</span>A <b>"cocoon corner" setup guide</b> — a one-page diagram for arranging bed, water, meds, phone within arm's reach BEFORE the patient sits down.</div>
+      <div class="card"><span class="tag tag-meta">pupa</span>A <b>"recovery threshold" sticker</b> the family places on their own front door — crossing it means "I'm actively recovering now, treat me gently."</div>
+      <div class="card"><span class="tag tag-meta">adult</span>A <b>"recovery graduation"</b> at the final follow-up — a printed certificate, and an invitation to become a peer "graduate patient" who teaches the next cohort.</div>
+      <div class="card"><span class="tag tag-meta">adult</span>A fridge <b>"molt chart"</b> — physical stickers earned at day 3, 7, 14, 30, turning adherence into a visible collection.</div>
+      <div class="card"><span class="tag tag-meta">adult</span>A mailed <b>hand-written postcard</b> at week 3 from the ward team — "thinking of you, how's the recovery?" — proving the relationship outlived the bed.</div>
+    </div>
+  </section>
+
+  <!-- ===================== 3. DISNEY ===================== -->
+  <section id="disney">
+    <div class="sechead">
+      <span class="secnum">INSTRUMENT ③</span>
+      <h2 class="sectitle">The Disney Method: Three Rooms</h2>
+      <span class="sectool">Structured</span>
+    </div>
+    <p class="secblurb">Every idea walked through three rooms — the Dreamer who wants the impossible, the Realist who runs a 30-bed ward with two nurses, and the Critic who knows exactly what staff won't sustain. Only survivors made it out.</p>
+
+    <div class="rooms">
+      <div class="room dreamer"><div class="role">Room One</div><h4>The Dreamer</h4>
+        <p>Discharge is a sacred, unhurried passage. No clock, no paperwork. The patient leaves as a fully-rehearsed graduate, accompanied home, with a human on call.</p></div>
+      <div class="room realist"><div class="role">Room Two</div><h4>The Realist</h4>
+        <p>11am discharge pressure, no budget, staff turnover. Steal the SPIRIT of the dream and fit it into existing slots and existing people.</p></div>
+      <div class="room critic"><div class="role">Room Three</div><h4>The Critic</h4>
+        <p>Staff won't sustain new documentation. Volunteers flake. Bells annoy. Lounges become storage. Anything resting on one named person dies on a sick day.</p></div>
+    </div>
+
+    <div class="cards">
+      <div class="card"><span class="tag tag-disney">dreamer</span>A dedicated <b>"Discharge Lounge"</b> — a calm, non-clinical room with a kitchen and a coach, where patients spend their last 2 hours rehearsing real life (making tea, taking a dose).</div>
+      <div class="card"><span class="tag tag-disney">dreamer</span>Every patient sent home WITH a <b>"recovery doula"</b> for the first night — cooks the first meal, sets up the cocoon, leaves at dawn.</div>
+      <div class="card"><span class="tag tag-disney">dreamer</span>A <b>"rehearsal apartment"</b> on the ward — a mock home where patients practice stairs, getting out of bed, and meds before real discharge.</div>
+      <div class="card"><span class="tag tag-disney">dreamer</span>A 5-minute <b>"send-off circle"</b> — the team gathers, each says one thing to remember, and the patient rings a bell on the way out.</div>
+      <div class="card"><span class="tag tag-disney">realist</span>Convert one underused side-room into a <b>shared Discharge Lounge</b> staffed by volunteers + one rotating nurse — frees the bed AND gives rehearsal time. Turnover pressure becomes the ally.</div>
+      <div class="card"><span class="tag tag-disney">realist</span>The doula becomes a vetted <b>volunteer / faith-community / neighbor program</b> — a register of "first-night friends," not paid staff.</div>
+      <div class="card"><span class="tag tag-disney">realist</span>The apartment shrinks to a rolling <b>"rehearsal cart"</b> at the bedside — a real pill bottle, a mock dressing, a phone. Practice the 3 hardest tasks in 10 minutes.</div>
+      <div class="card"><span class="tag tag-disney">realist</span>The send-off shrinks to the <b>90-second doorway huddle</b> plus a small bell at the ward exit any patient may ring.</div>
+      <div class="card"><span class="tag tag-disney">realist</span>Build teach-back into the existing <b>medication round</b> — the nurse already brings the pills, so she just asks for the explanation back. Zero extra visits.</div>
+      <div class="card"><span class="tag tag-disney">critic-fix</span>Make teach-back <b>REDUCE</b> work — replace the long sign-off form with a single "patient explained back: y/n" tick. Saves nursing minutes, survives audits.</div>
+      <div class="card"><span class="tag tag-disney">critic-fix</span>Never depend on ONE coach — assign a rotating <b>"today's Recovery Lead" badge</b> so the role survives sick days and turnover.</div>
+      <div class="card"><span class="tag tag-disney">critic-fix</span><b>Pre-assemble</b> the First Night Box &amp; pill organizers in bulk via pharmacy/supply — a kit-of-parts restocked like any ward supply, never improvised per-patient.</div>
+      <div class="card"><span class="tag tag-disney">critic-fix</span>Protect the Lounge by tying it to the <b>bed-flow metric leadership already cares about</b> — framed as a turnover tool, management defends it.</div>
+      <div class="card"><span class="tag tag-disney">critic-fix</span>Replace the annoying bell with a quiet <b>"recovery roll"</b> the patient signs on the way out — a visible chain of graduates that also markets the program to staff.</div>
+    </div>
+
+    <div class="survivor">
+      <span class="crown">👑</span> <b>Survivor synthesis —</b> the <b>Discharge Lounge</b> is the keystone. It simultaneously solves bed-turnover (the Realist's win), creates rehearsal time (the Dreamer's spirit), houses teach-back, the rehearsal cart and box-assembly — and survives because management <em>wants</em> the bed back.
+    </div>
+  </section>
+
+  <!-- ===================== 4. FUTURE SELF ===================== -->
+  <section id="future">
+    <div class="sechead">
+      <span class="secnum">INSTRUMENT ④</span>
+      <h2 class="sectitle">The Future Selves Speak</h2>
+      <span class="sectool">Introspective</span>
+    </div>
+    <p class="secblurb">We interviewed two people from the future: a patient at 80 looking back on the recovery that went right, and a discharge nurse looking back on 40 years and the patients she wishes she hadn't rushed.</p>
+
+    <div class="voices">
+      <div class="voice">
+        <div class="who"><div class="av">👵</div><div><b>The Patient at 80</b><span>recovered well, looking back</span></div></div>
+        <div class="quote"><b>"They asked what MY normal day looks like</b> — my kitchen, my stairs, my routine — and built the plan around it, not a generic leaflet." → a 5-question "your real life" interview that customizes the plan.</div>
+        <div class="quote"><b>"The best thing was knowing exactly who to call</b> — and that they were expecting my call." → a named human + a pre-warned, scheduled check-in.</div>
+        <div class="quote"><b>"I wish they'd told me recovery would have bad days</b> and that was normal — I almost gave up at day 4." → a printed "recovery weather forecast" showing the expected dip.</div>
+        <div class="quote"><b>"I remembered what they made me DO with my hands,</b> not what they said." → mandate physical practice over verbal instruction, every time.</div>
+        <div class="quote"><b>"My daughter understood it better than me and ran the show</b> — smart of them to teach her." → formalize teaching the caregiver as the primary learner.</div>
+        <div class="quote"><b>"They gave me one tiny win on day one</b> — just walk to the mailbox — and that made me believe I could do the rest." → one absurdly-achievable day-one task.</div>
+      </div>
+      <div class="voice">
+        <div class="who"><div class="av nurse">👩‍⚕️</div><div><b>The Nurse at 40 Years</b><span>her regrets and her rituals</span></div></div>
+        <div class="quote"><b>"The ones that came back were always the ones I rushed at shift change."</b> → a ward rule: never discharge in the final 60 minutes of any shift.</div>
+        <div class="quote"><b>"I wish we'd timed discharge to the morning"</b> — a full day of daylight, open pharmacies, open services to land into. → default morning discharges, hard-stop on evenings.</div>
+        <div class="quote"><b>"The best thing I ever did was sit DOWN at eye level"</b> instead of standing over the bed — they heard me when I sat. → teaching done seated, at eye level, door closed.</div>
+        <div class="quote"><b>"We obsessed over meds and forgot to ask if they had FOOD,</b> a working stove, a ride — the social stuff sank more recoveries than the clinical." → a "can you actually do this at home?" checklist.</div>
+        <div class="quote"><b>"They trusted the note with my handwriting on it</b> more than any printout." → a hand-written personal line from the nurse on every plan.</div>
+        <div class="quote"><b>"The families that did best had a map"</b> — a sheet of exactly what to expect each day for a week. → a printed day-by-day "recovery map" calendar.</div>
+        <div class="quote"><b>"We should have called THEM — the ones in trouble never called."</b> → a proactive scheduled call-out at 48h and day 7. And: treat discharge as a profession with one person who OWNS it — a "Discharge Lead" each shift.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SYNTHESIS ===================== -->
+  <section id="synth" class="climax">
+    <h2>What It All Adds Up To</h2>
+    <p class="sub">the few directions that actually move adherence and cut readmissions</p>
+
+    <div class="keystone">
+      <div class="k">★ The Keystone</div>
+      <h3>The Discharge Lounge</h3>
+      <p>The single highest-leverage move, because it resolves the root cause itself. The ward is rewarded for emptying the bed, not for understanding — so build a calm, non-clinical room patients move to the instant the decision is made. The bed frees immediately (management's win) AND the unhurried hour for teach-back, the rehearsal cart, box-assembly and the doorway huddle finally exists. The enemy — turnover pressure — becomes the funding case.</p>
+    </div>
+
+    <div class="insights">
+      <div class="ins"><h4><i>⏱</i> Time is the real drug</h4><p>Three instruments independently pointed at <b>when</b>, not what: teach 24–48h early, one lesson a day, never discharge in the last hour of a shift, default to mornings. The rushed final hour <em>is</em> the disease. Spreading teaching across the stay and discharging into daylight costs nothing — the cheapest high-impact lever found.</p></div>
+
+      <div class="ins"><h4><i>✋</i> Three ideas in disguise</h4><p>"Mandatory teach-back," "physical practice with your hands," and the "rehearsal cart" are <b>one intervention</b>: replace telling with doing-and-proving. Bundle them — the patient DOES the task and TEACHES it back before the bed releases. Critic-proofed by making it <em>replace</em> the long sign-off form, so it saves time instead of adding it.</p></div>
+
+      <div class="ins"><h4><i>👪</i> Teach the caregiver, not the patient</h4><p>The quiet breakthrough. The person who does the actual home care is usually never in the room. Requiring the <b>named caregiver to be present and to sign the teach-back</b> is a near-zero-cost rule that likely moves adherence more than any patient-facing artifact.</p></div>
+
+      <div class="ins"><h4><i>📞</i> Reach out — they won't call you</h4><p>The patients who most need help are the least likely to phone. Pair the non-clinical <b>Recovery Coach</b> with a scheduled <b>outbound</b> call at the landing hour and again at 48h / day-7. Human, non-software, and Critic-proofed as a rotating shift role — never one person who can be off sick.</p></div>
+
+      <div class="ins wild"><h4><i>🍞</i> The social-readiness blind spot</h4><p><b>The wildcard that may matter most.</b> The nurse's "we forgot to ask if they had food, a stove, a ride" exposes that this whole session — and most real discharges — over-index on clinical content. A one-page <b>"can you actually do this at home?"</b> checklist (food, transport, stairs, money, company) catches the failures no amount of beautiful teaching can fix.</p></div>
+
+      <div class="ins"><h4><i>📄</i> One physical thing, kept where life happens</h4><p>The recurring artifact winner: physically <b>separate the institution's liability paperwork from the patient's one usable object</b>. The fridge placemat, the boarding-pass appointment card, the day-by-day recovery map — all the same instinct: one beautiful, hand-annotated thing kept where panic and meals happen, never buried in a 14-page envelope.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="rule"></div>
+    <span class="count">62 ideas</span> · 4 instruments · Five Whys, Metamorphosis Stages, Disney Method, Future Self Interview<br>
+    The Discharge Almanac — an autonomous brainstorm, 31 May 2026. People, paper, ritual. No screens required.
+  </footer>
+
+</div>
+</body>
+</html>

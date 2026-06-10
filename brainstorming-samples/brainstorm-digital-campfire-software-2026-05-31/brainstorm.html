@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Digital Campfire · a brainstorm</title>
+<style>
+  :root{
+    --night:#1a120b; --night2:#241812; --ash:#3a2c22;
+    --ember:#ff7a18; --ember2:#ffb347; --gold:#ffcf6b; --glow:#ffe6b0;
+    --smoke:#c9b79c; --faint:#8a7a66; --paper:#efe3cf;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;
+    color:var(--glow);
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 92%, rgba(255,122,24,.28), transparent 60%),
+      radial-gradient(ellipse 120% 80% at 50% 0%, #2a1c12, #140d07 70%),
+      #100a05;
+    line-height:1.6; overflow-x:hidden;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    min-height:96vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    position:relative; padding:40px 18px;
+  }
+  .fire{font-size:88px; line-height:1; filter:drop-shadow(0 0 28px rgba(255,122,24,.7));
+    animation:flicker 2.6s infinite alternate;}
+  @keyframes flicker{
+    0%{transform:scale(1) rotate(-1deg); filter:drop-shadow(0 0 20px rgba(255,122,24,.6));}
+    40%{transform:scale(1.04) rotate(1deg);}
+    100%{transform:scale(.98) rotate(-1.5deg); filter:drop-shadow(0 0 40px rgba(255,180,71,.9));}
+  }
+  header.hero h1{
+    font-size:clamp(40px,9vw,86px); margin:.1em 0 0; font-weight:600; letter-spacing:.5px;
+    background:linear-gradient(180deg,var(--glow),var(--ember2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(255,150,40,.25);
+  }
+  header.hero .sub{color:var(--smoke); font-style:italic; font-size:clamp(16px,2.5vw,22px); max-width:30ch; margin:.4em auto 0;}
+  header.hero .meta{margin-top:34px; color:var(--faint); font-size:13px; letter-spacing:2px; text-transform:uppercase;}
+  .scrolldown{margin-top:50px; color:var(--faint); font-size:13px; animation:bob 2s infinite;}
+  @keyframes bob{50%{transform:translateY(8px);}}
+
+  /* drifting embers */
+  .embers{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+  .embers i{position:absolute; bottom:-10px; width:4px; height:4px; border-radius:50%;
+    background:radial-gradient(var(--gold),var(--ember)); opacity:.0;
+    animation:rise linear infinite;}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0) scale(1); opacity:0;}
+    10%{opacity:.9;}
+    90%{opacity:.5;}
+    100%{transform:translateY(-100vh) translateX(40px) scale(.3); opacity:0;}
+  }
+  main{position:relative; z-index:1;}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:70px 0 30px;}
+  .tline{display:flex; align-items:center; gap:14px; margin-bottom:8px;}
+  .tnum{font-size:13px; letter-spacing:3px; color:var(--ember); text-transform:uppercase;}
+  .tline hr{flex:1; border:none; border-top:1px dashed var(--ash);}
+  h2.tech{font-size:clamp(26px,5vw,40px); margin:.1em 0; font-weight:600;}
+  .gist{color:var(--smoke); font-style:italic; margin:0 0 26px; max-width:60ch;}
+  .glyph{font-size:30px;}
+
+  /* idea cards — each technique a different treatment */
+  .ideas{display:grid; gap:16px;}
+
+  /* T1 First Principles — bedrock stone tablets */
+  .stone .card{
+    background:linear-gradient(160deg,#2b2018,#1d150f);
+    border:1px solid #4a3829; border-left:4px solid var(--ember);
+    border-radius:6px; padding:16px 18px;
+    box-shadow:inset 0 1px 0 rgba(255,200,120,.06);
+  }
+  .stone .card b{color:var(--gold);}
+
+  /* T2 Quantum Tunneling — split barrier / otherside */
+  .quantum .card{
+    border:1px dashed #5a4636; border-radius:10px; padding:0; overflow:hidden;
+    background:#1b130d; display:grid; grid-template-columns:auto 1fr;
+  }
+  .quantum .barrier{background:repeating-linear-gradient(45deg,#2a1d13,#2a1d13 8px,#221710 8px,#221710 16px);
+    color:var(--faint); writing-mode:vertical-rl; text-orientation:mixed; padding:10px 8px; font-size:11px;
+    letter-spacing:2px; text-transform:uppercase; display:flex; align-items:center; justify-content:center;}
+  .quantum .through{padding:15px 18px;}
+  .quantum .through .arr{color:var(--ember2); font-size:12px; letter-spacing:2px; text-transform:uppercase; display:block; margin-bottom:5px;}
+
+  /* T3 Sci-Fi Artifact — museum placard */
+  .scifi .card{
+    background:linear-gradient(180deg,#221913,#1a120c);
+    border:1px solid #4a3829; border-radius:4px; padding:16px 18px; position:relative;
+  }
+  .scifi .tag{display:inline-block; font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--night); background:var(--gold); padding:3px 9px; border-radius:3px; margin-bottom:9px;}
+  .scifi .rev{color:var(--smoke); display:block; margin-top:8px; font-size:.94em;}
+  .scifi .rev b{color:var(--ember2);}
+
+  /* T4 Indigenous Wisdom — woven mat, source named */
+  .wisdom .card{
+    background:#1c140e; border:1px solid #4a3829; border-radius:14px; padding:16px 18px;
+    background-image:repeating-linear-gradient(90deg,rgba(255,200,120,.03) 0 2px,transparent 2px 10px);
+  }
+  .wisdom .src{color:var(--ember); font-size:12px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:6px;}
+
+  .card{font-size:15.5px;}
+
+  /* ---------- SYNTHESIS climax ---------- */
+  .synth{
+    margin-top:60px; padding:70px 0 80px;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,140,40,.22), transparent 65%);
+    text-align:center;
+  }
+  .synth h2{font-size:clamp(30px,6vw,52px); margin:0;
+    background:linear-gradient(180deg,var(--glow),var(--ember));
+    -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .synth .lede{color:var(--smoke); font-style:italic; max-width:50ch; margin:8px auto 40px;}
+  .insights{display:grid; gap:20px; text-align:left; max-width:760px; margin:0 auto;}
+  .ins{
+    background:linear-gradient(150deg,rgba(60,42,28,.6),rgba(26,18,12,.6));
+    border:1px solid #5a4330; border-radius:14px; padding:20px 22px;
+    box-shadow:0 0 40px rgba(255,120,30,.08);
+  }
+  .ins .h{display:flex; align-items:baseline; gap:10px; margin-bottom:6px;}
+  .ins .k{font-size:24px;}
+  .ins .t{font-weight:600; color:var(--gold); font-size:17px;}
+  .ins p{margin:0; color:var(--glow); font-size:15px;}
+
+  .mvp{
+    margin:46px auto 0; max-width:760px; text-align:left;
+    border:2px solid var(--ember); border-radius:18px; padding:28px 26px;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,130,30,.18), rgba(20,13,8,.9));
+    box-shadow:0 0 60px rgba(255,120,30,.2);
+  }
+  .mvp h3{margin:0 0 4px; font-size:24px; color:var(--gold);}
+  .mvp .lab{font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--ember2);}
+  .mvp ul{margin:14px 0 0; padding-left:0; list-style:none;}
+  .mvp li{padding:7px 0 7px 28px; position:relative; border-bottom:1px solid rgba(90,67,48,.4);}
+  .mvp li:before{content:"🔥"; position:absolute; left:0; font-size:14px;}
+
+  .dirs{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; max-width:760px; margin:40px auto 0;}
+  .dir{border:1px solid #5a4330; border-radius:12px; padding:16px; background:rgba(28,20,14,.7); text-align:left;}
+  .dir .b{font-size:30px;}
+  .dir h4{margin:6px 0 4px; color:var(--gold);}
+  .dir p{margin:0; color:var(--smoke); font-size:13.5px;}
+
+  footer{text-align:center; padding:50px 20px 70px; color:var(--faint); font-size:13px;}
+  footer .fade{font-style:italic; color:var(--smoke);}
+</style>
+</head>
+<body>
+<div class="embers" id="embers"></div>
+
+<header class="hero">
+  <div class="fire">🔥</div>
+  <h1>The Digital Campfire</h1>
+  <p class="sub">software that makes the internet feel warm, slow, present, and human again</p>
+  <p class="meta">a solo brainstorm · 31 may 2026 · 62 sparks · 4 techniques</p>
+  <p class="scrolldown">↓ pull up a chair</p>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- ================= TECHNIQUE 1 ================= -->
+<section class="stone">
+  <div class="tline"><span class="tnum">Technique 01</span><hr></div>
+  <h2 class="tech"><span class="glyph">🪨</span> First Principles</h2>
+  <p class="gist">Strip "social software" down to the bedrock of what a fire actually is — local, scarce, fading, one-voice-at-a-time, lit from below, unrecorded, in need of tending — then rebuild only from that truth.</p>
+  <div class="ideas">
+    <div class="card"><b>Hearth</b> — one shared fire per friend-group that burns only while someone sits at it; the flame dims to embers as hours pass untended and archives after 7 days. The social object requires care to exist.</div>
+    <div class="card"><b>Talking Stick</b> — in a group voice room, only the holder of a glowing token may speak; you pass it by tapping the next person. Turn-taking enforced in protocol, not etiquette.</div>
+    <div class="card"><b>Ember messages</b> — texts written in firelight that cool from bright to faint to ash over 48h. Readable now or never; the anxious re-read and the searchable archive both die.</div>
+    <div class="card"><b>Seven chairs</b> — every space hard-capped at Dunbar's intimate 7; when full, newcomers see "the fire is full" and wait for a seat. Scarcity of presence instead of infinite scale.</div>
+    <div class="card"><b>No feed</b> — the home screen is a dark canvas showing only who is awake and around now, as soft glowing dots. You can act only on the present, never browse the absent.</div>
+    <div class="card"><b>Lit-from-below camera</b> — only warm under-lighting allowed, flattering filters forbidden. Every photo looks like a face by a fire, killing the beauty arms-race at the format level.</div>
+    <div class="card"><b>The Tending log</b> — keeping the fire alive means adding one genuine small log a day; logs are burned, not stacked. History is warmth-while-it-lasts, not an archive to perform for.</div>
+    <div class="card"><b>Banked coals</b> — async messages are 20-second warm voice notes replayable exactly 3 times before crumbling to ash. Listening becomes intentional; hoarding is impossible.</div>
+    <div class="card"><b>Single flame status</b> — no online / typing / last-seen surveillance. Each person is simply a candle, lit or unlit. The only signal is whether they chose to be present.</div>
+    <div class="card"><b>Firewatch shifts</b> — the group rotates who "keeps the fire" each evening hour; the one on watch gets gentle pings if a lonely friend shows up. Emotional labor distributed, not dumped.</div>
+    <div class="card"><b>No counts anywhere</b> — the app architecturally <i>cannot</i> render a number. No followers, likes, views, streaks. Warmth is glow intensity only. The scoreboard never exists.</div>
+    <div class="card"><b>Pull up a chair</b> — you can't follow or friend; you can only pull up a chair for one evening, expiring at dawn. Bonds are renewed nightly by choice, not accumulated as permanent edges.</div>
+    <div class="card"><b>Smoke signals</b> — the only outbound alert is a slow rising smoke a friend may or may not glance up and notice. Non-buzzing, ignorable. Presence is offered, never demanded.</div>
+    <div class="card"><b>Ash journal</b> — zero server history; the app prompts you to handwrite one line each night. The archive lives in your paper notebook, not a searchable cloud.</div>
+    <div class="card"><b>Warmth-decay graph</b> — untended ties visibly grey out; a friendship you haven't sat with in a month becomes a cold log you must re-light with a real interaction. The graph stays honest.</div>
+  </div>
+</section>
+
+<!-- ================= TECHNIQUE 2 ================= -->
+<section class="quantum">
+  <div class="tline"><span class="tnum">Technique 02</span><hr></div>
+  <h2 class="tech"><span class="glyph">🌀</span> Quantum Tunneling</h2>
+  <p class="gist">Don't climb the "impossible" walls (monetize without ads, intimacy at scale, no FOMO) — pass straight through them and describe what's on the other side, reached cheaply.</p>
+  <div class="ideas">
+    <div class="card"><div class="barrier">monetize w/o ads</div><div class="through"><span class="arr">→ other side</span><b>Firewood subscription</b> — you pay not for features but for logs you can only <i>give away</i> to keep friends' fires lit. Spending money is itself generosity.</div></div>
+    <div class="card"><div class="barrier">pay-to-use guilt</div><div class="through"><span class="arr">→ other side</span><b>Hosts pay, guests never do</b> — free to sit at any fire forever; you pay only to own a hearth, like paying for the cabin not the conversation. Hosting is a status of care.</div></div>
+    <div class="card"><div class="barrier">intimacy at scale</div><div class="through"><span class="arr">→ other side</span><b>A forest of tiny fires</b> — never scale one room; scale by spawning millions of disconnected 7-person fires that never see each other. The business is the kindling between them.</div></div>
+    <div class="card"><div class="barrier">no network effect</div><div class="through"><span class="arr">→ other side</span><b>Warmth referral</b> — you invite someone only by giving up your own seat for a night. Growth gated by genuine sacrifice; every newcomer arrives already cared-for.</div></div>
+    <div class="card"><div class="barrier">FOMO</div><div class="through"><span class="arr">→ other side</span><b>Closing Time</b> — every fire posts a closing hour and will not open till tomorrow. You can't miss out, because the option is removed for everyone equally.</div></div>
+    <div class="card"><div class="barrier">engagement KPIs</div><div class="through"><span class="arr">→ other side</span><b>"Minutes you didn't need us"</b> — the company's only north star is declining session length per visit, celebrated as the promise. Retention via trust, not hooks.</div></div>
+    <div class="card"><div class="barrier">attention extraction</div><div class="through"><span class="arr">→ other side</span><b>The ember-stone</b> — a real ceramic object on your desk that glows when a friend lights their fire. Phone stays pocketed. Sell the lovely object once, never the attention.</div></div>
+    <div class="card"><div class="barrier">privacy vs warmth</div><div class="through"><span class="arr">→ other side</span><b>Craft as moat</b> — E2E encrypted, zero content held. Monetize the ritual artifacts (printed ash-journals, seasonal log packs), never the conversations.</div></div>
+    <div class="card"><div class="barrier">loneliness needs people now</div><div class="through"><span class="arr">→ other side</span><b>AI fire-keeper, never a fake friend</b> — it nudges your <i>real</i> humans ("Sam hasn't sat with you lately — set out a chair Thursday?"). Warmth-logistics, not warmth-replacement.</div></div>
+    <div class="card"><div class="barrier">cold-start empty room</div><div class="through"><span class="arr">→ other side</span><b>Public bonfire + Fire-Keeper</b> — new users land at a room staffed by a rotating trained host paid in credit. Never empty, never algorithmic. Hospitality is the onboarding.</div></div>
+    <div class="card"><div class="barrier">feature-war w/ Big Tech</div><div class="through"><span class="arr">→ other side</span><b>Ship fewer features yearly</b> — remove one thing each year in a public "letting the fire die down" ritual. Anti-bloat as the brand.</div></div>
+    <div class="card"><div class="barrier">notifications = retention</div><div class="through"><span class="arr">→ other side</span><b>A bedtime</b> — the app locks at your set hour, shows a banked-coals screen, won't reopen till morning. Sold as peace; retention via being trusted.</div></div>
+    <div class="card"><div class="barrier">content needs creators</div><div class="through"><span class="arr">→ other side</span><b>The Warm</b> — no content; the only shareable thing is a wordless pulse of I'm-thinking-of-you, costing one log, un-mass-sendable. An economy of non-verbal affection.</div></div>
+    <div class="card"><div class="barrier">grow-or-die VC math</div><div class="through"><span class="arr">→ other side</span><b>Slow-profit co-op</b> — owned by its fire-keepers; surplus redistributed as free firewood to elder homes & recovery groups. The model itself distributes warmth.</div></div>
+    <div class="card"><div class="barrier">anonymity breeds cruelty</div><div class="through"><span class="arr">→ other side</span><b>Handshake-rooted ties</b> — you can only share a fire with people you've met once in person (one-time NFC tap). Every tie roots in a real handshake; cruelty has a face.</div></div>
+  </div>
+</section>
+
+<!-- ================= TECHNIQUE 3 ================= -->
+<section class="scifi">
+  <div class="tline"><span class="tnum">Technique 03</span><hr></div>
+  <h2 class="tech"><span class="glyph">🛸</span> Sci-Fi Artifact From the Future</h2>
+  <p class="gist">Objects, ads, headlines, and app-store listings from the world where the digital campfire already won — then reverse-engineer the product that must exist behind each one.</p>
+  <div class="ideas">
+    <div class="card"><span class="tag">App Store · 2031</span>"Hearth — 0 notifications, 0 feed, 0 ads. <i>I open it twice a day and feel held.</i>"<span class="rev"><b>→</b> A strictly twice-daily app (dawn + dusk) that batches all warmth into two gentle openings, training a rhythm, not a habit-loop.</span></div>
+    <div class="card"><span class="tag">Subway ad</span>"Remember when you knew everyone's voice?" — <b>VOICEKNOWN</b><span class="rev"><b>→</b> A tiny group where text is banned; only short voice and ambient sound, so you re-learn the actual sound of your six closest people.</span></div>
+    <div class="card"><span class="tag">Craft fair · 2030</span>A glowing wooden hex coaster: "Set it on the dinner table — it dims when you pick up your phone."<span class="rev"><b>→</b> A presence puck for in-person gatherings that rewards phone-down time with a shared group glow. Gamifies <i>not</i> looking.</span></div>
+    <div class="card"><span class="tag">Museum · 2027</span>"The Last Like Button" — beside a smashed phone.<span class="rev"><b>→</b> A manifesto-app launched by users deleting their old social apps; approval can only be given face-to-face or by voice, never by tap.</span></div>
+    <div class="card"><span class="tag">Picture book · 2032</span>"The Night the Internet Got Quiet" — families gathered round a softly glowing screen.<span class="rev"><b>→</b> A bedtime story-circle where distant grandparents and grandkids share one slowly-illustrating canvas as someone narrates live.</span></div>
+    <div class="card"><span class="tag">Year-end card</span>"You sat with 9 people this year, for 140 hours, and remembered 3 things."<span class="rev"><b>→</b> The anti-Wrapped — a yearly keepsake celebrating depth over reach, printed and mailed, never shareable.</span></div>
+    <div class="card"><span class="tag">Billboard</span>"Your grandmother is online for 11 more minutes." — <b>LAST LIGHT</b><span class="rev"><b>→</b> An elder app broadcasting a simple "I'm up and around" window to family, with one-tap "come sit with me." Warmth as eldercare.</span></div>
+    <div class="card"><span class="tag">Job posting · 2033</span>"Hiring: Night Fire-Keepers, $25/hr, must be warm at 2am." — <b>LATE</b><span class="rev"><b>→</b> A paid-host network for the lonely at night; insomniacs and grievers join a small staffed quiet fire any hour. Human, not bot.</span></div>
+    <div class="card"><span class="tag">Device review</span>"The Mantel turns your whole living room amber when far-away family is gathered."<span class="rev"><b>→</b> An ambient light fixture synced to a family circle; the home itself becomes the campfire interface.</span></div>
+    <div class="card"><span class="tag">Wedding registry · 2030</span>"A shared hearth account for the newlyweds and their 12 closest people."<span class="rev"><b>→</b> Hearths as giftable lifelong vessels — a circle you're gifted into. One-time heirloom software, not subscriptions.</span></div>
+    <div class="card"><span class="tag">Bumper sticker · 2035</span>"I LEFT THE FEED AND I'M STILL HERE."<span class="rev"><b>→</b> A detox concierge that imports your old follow graph and helps you privately tell just your 8 real people "find me here instead."</span></div>
+    <div class="card"><span class="tag">Film prop</span>A "memory log" stick handed to a child: "every fireside night we ever had — but burn it after watching once."<span class="rev"><b>→</b> A legacy feature: a circle's warmth sealed into a single one-time-playable keepsake, passed on after a death.</span></div>
+    <div class="card"><span class="tag">Headline · 2031</span>"Teens Form Secret Slow Clubs, Phones Face-Down."<span class="rev"><b>→</b> A teen circle whose vibe is co-presence while doing nothing — homework-together, silent-reading-together rooms. Being near, not performing.</span></div>
+    <div class="card"><span class="tag">In-box card</span>A laminated "Fireside Etiquette" safety card.<span class="rev"><b>→</b> The product ships with a social contract you sign on first launch (no screenshots, no forwarding, one voice at a time). Norms as an opt-in feature.</span></div>
+    <div class="card"><span class="tag">Obituary · 2034</span>"She kept 200 strangers warm through the long winter of 2029."<span class="rev"><b>→</b> A legacy system honoring great hosts with permanent named hearths. Hospitality becomes the platform's prestige currency.</span></div>
+  </div>
+</section>
+
+<!-- ================= TECHNIQUE 4 ================= -->
+<section class="wisdom">
+  <div class="tline"><span class="tnum">Technique 04</span><hr></div>
+  <h2 class="tech"><span class="glyph">🌿</span> Indigenous &amp; Traditional Wisdom</h2>
+  <p class="gist">How would living knowledge systems — talking circles, hearth customs, oral storytelling, seasonal gathering rites — design online togetherness? Each tradition translated into a mechanic.</p>
+  <div class="ideas">
+    <div class="card"><span class="src">Talking Circle · Lakota &amp; many First Nations</span>Mic-rights pass sunwise around the visible ring of avatars; you may pass without speaking, silence is honored, and no one can grab the floor.</div>
+    <div class="card"><span class="src">Ubuntu · Southern Africa</span>"I am because we are." Your profile is co-written from the warm words others leave about you. You can't edit your own identity — self-curation dissolves.</div>
+    <div class="card"><span class="src">Potlatch · Pacific NW Coast</span>Standing rises by what you've <i>given</i>; periodically a host throws a giveaway distributing all their accumulated warmth. Generosity-as-status, kept private.</div>
+    <div class="card"><span class="src">Sámi / Nordic hearth</span>Real seasons: winter opens longer and softer and prompts gathering; bright summer nudges you outside and offline. Rhythm follows daylight, not a flat grind.</div>
+    <div class="card"><span class="src">Songlines · Aboriginal Australia</span>A circle's memory is a walkable path of voice-notes left at real GPS places; revisiting a spot replays the warmth that happened there. Memory rooted in land.</div>
+    <div class="card"><span class="src">Pōwhiri · Māori marae</span>You can't silently lurk in; entering triggers a brief mutual welcome (a greeting offered, a greeting returned) before you're seated. The lurker is abolished.</div>
+    <div class="card"><span class="src">Griot · West Africa</span>Each circle elects a rotating Griot who, once a season, weaves the burned/expired moments into one told story-of-the-season — the only thing that persists.</div>
+    <div class="card"><span class="src">Ma &amp; Kintsugi · Japan</span>Enforced silence after each speaker; a long-dormant friendship is shown not as failure but as a gold-seamed scar to honor and mend.</div>
+    <div class="card"><span class="src">Quaker meeting</span>A "sitting in silence together" room where presence is the whole point; anyone may break silence only when genuinely moved. Co-presence without obligation.</div>
+    <div class="card"><span class="src">Hoʻoponopono · Hawaiʻi</span>A built-in "mending circle" for when friends fall out — a guided, turn-based, private repair ritual instead of the block button. Conflict-repair as a feature.</div>
+    <div class="card"><span class="src">Dakhāla · Bedouin hospitality</span>"Shelter" status: any member can grant a struggling friend three days of unconditional fireside support; others rally, no questions asked. The sacred-guest custom, codified.</div>
+    <div class="card"><span class="src">Hygge + Ceilidh · Nordic / Irish</span>"House-visit" rooms entered only by personal welcome; candlelit UI; the activity is shared small things — a song, a tale, a cup. No event, just a visit.</div>
+    <div class="card"><span class="src">Seven Grandfather Teachings · Anishinaabe</span>The only "settings" are seven posture-toggles framed as virtues for tonight (am I here to listen / to be truthful / to be humble). Config becomes intention-setting.</div>
+    <div class="card"><span class="src">Ayni · Andean reciprocity</span>Warmth must be reciprocal to flow; showing up for others' fires builds your "ayni," which is what lets you call your own circle together. Mutual presence over one-way takers.</div>
+    <div class="card"><span class="src">Moonlit storytelling · West Africa</span>A weekly "moon night" — the app dims to moonlight, normal functions pause, the whole circle gathers for one shared activity. A sabbath-rhythm ritual on the calendar.</div>
+  </div>
+</section>
+
+</div>
+
+<!-- ================= SYNTHESIS ================= -->
+<section class="synth">
+  <div class="wrap">
+    <h2>🔥 What the fire revealed</h2>
+    <p class="lede">Reading the whole night back, a few sparks were quietly the same idea — and one of them is the breakthrough.</p>
+
+    <div class="insights">
+      <div class="ins"><div class="h"><span class="k">⭐</span><span class="t">The breakthrough: a care-loop, not an addiction-loop</span></div>
+        <p>Hearth + the Tending log + the warmth-decay graph + Andean Ayni are <b>one product in disguise</b>. The fire's continued <i>existence</i> is the engagement loop: you don't return to consume — you return so it doesn't go out. This inverts the entire attention machine into an act of care, and it's the strongest spine to build around.</p></div>
+
+      <div class="ins"><div class="h"><span class="k">💰</span><span class="t">Revenue that can't betray the coziness</span></div>
+        <p>Three ideas converge into one safe model: <b>free to sit, pay to host</b> (own the cabin, not the conversation), and the only in-app spend is <b>firewood you gift</b> to keep others' fires lit. Spending money is always an act of care — never of consumption.</p></div>
+
+      <div class="ins"><div class="h"><span class="k">🤝</span><span class="t">Human hospitality is the moat AND the business</span></div>
+        <p>The empty-room death of every small-social app is solved not by an algorithm but by people: the paid Fire-Keeper onboarding, the Māori-style welcome, Night Fire-Keepers for 2am loneliness. Big Tech structurally cannot copy a warm human host.</p></div>
+
+      <div class="ins"><div class="h"><span class="k">🌙</span><span class="t">Trust comes from rhythm, not availability</span></div>
+        <p>Closing Time + twice-daily dawn/dusk check-ins + seasonal Moon Nights stack into a rhythm you can rely on. The promise isn't "always here" — it's "reliably here, then gone." The exact reason a campfire is precious.</p></div>
+
+      <div class="ins"><div class="h"><span class="k">🚫</span><span class="t">Zero visible metrics is non-negotiable</span></div>
+        <p>No counts + Ubuntu co-written profiles + Potlatch give-to-rise = an identity layer with no scoreboard. If a single number leaks into the UI, the coziness collapses. Treat "the app cannot render a number" as a hard architectural constraint.</p></div>
+    </div>
+
+    <div class="mvp">
+      <span class="lab">The one to build · indie-shippable MVP</span>
+      <h3>🪵 Hearth</h3>
+      <p style="margin:6px 0 0;color:var(--smoke);">One private circle of up to seven, around a fire that lives only if it's loved.</p>
+      <ul>
+        <li>One circle, capped at <b>7 seats</b>; you invite by giving up your own seat for a night</li>
+        <li>A shared fire that visibly <b>dims and dies in 7 days untended</b> — care is the loop</li>
+        <li>The daily <b>Log</b>: one genuine voice-or-text contribution that burns after</li>
+        <li><b>Single-flame presence</b> — lit / unlit only. No read receipts, no last-seen, no counts anywhere</li>
+        <li><b>Ember messages</b> that cool from bright to ash, and a posted <b>Closing Time</b> each night</li>
+        <li>Voice-first, dark, warm, lit-from-below UI</li>
+        <li>Monetize later: <b>pay-to-host</b> + <b>giftable firewood</b></li>
+      </ul>
+    </div>
+
+    <div class="dirs">
+      <div class="dir"><div class="b">🏕️</div><h4>A · Hearth app</h4><p>Care-loop circles. Indie-shippable, deeply novel feel. <b>The recommended pick.</b></p></div>
+      <div class="dir"><div class="b">🤝</div><h4>B · Fire-Keeper network</h4><p>Hosted human hospitality. Eldercare & night-loneliness payers; the most defensible standalone business.</p></div>
+      <div class="dir"><div class="b">🕯️</div><h4>C · Ambient object</h4><p>The ember-stone / Mantel light. Presence sold as a lovely one-time object, sidestepping the attention economy.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p class="fade">62 sparks · First Principles · Quantum Tunneling · Sci-Fi Artifact · Indigenous Wisdom</p>
+  <p>the fire's banked for the night. 🔥 → 🌑</p>
+</footer>
+
+<script>
+  // drifting embers
+  (function(){
+    var c = document.getElementById('embers');
+    for(var i=0;i<28;i++){
+      var e = document.createElement('i');
+      e.style.left = Math.random()*100 + 'vw';
+      var d = 6 + Math.random()*10;
+      e.style.animationDuration = d + 's';
+      e.style.animationDelay = (-Math.random()*d) + 's';
+      var s = .5 + Math.random()*1.8;
+      e.style.width = e.style.height = (s*4) + 'px';
+      c.appendChild(e);
+    }
+  })();
+</script>
+</body>
+</html>

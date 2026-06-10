@@ -1,8 +1,8 @@
 ---
 title: BMad Method Sample Data
 purpose: Curated, hand-shaped sample inputs and artifacts for testing and demonstrating BMad Method skills.
-total_entries: 102
-last_updated: 2026-05-17
+total_entries: 110
+last_updated: 2026-06-09
 ---
 
 # BMad Method Sample Data
@@ -29,6 +29,7 @@ Folders are ordered roughly upstream to downstream along the BMad funnel.
 | [`brds/`](brds/) | Business Requirements Documents — corporate-style "the system shall" docs, light on product framing | 6 |
 | [`briefs/`](briefs/) | Product briefs (one altitude above PRDs); standalone briefs and brief→PRD pairs | 6 |
 | [`prds/`](prds/) | Formal product specifications at the PRD altitude: PRDs, PRFAQs, OSS RFCs, JTBD job-stories specs | 53 |
+| [`brainstorming-samples/`](brainstorming-samples/) | Completed bmad-brainstorming sessions — intent + full HTML output — across consumer products, services, and BMad ecosystem topics | 8 |
 | [`architectures-solution-designs/`](architectures-solution-designs/) | Downstream architecture and solution-design artifacts | (placeholder) |
 | [`projects/`](projects/) | End-to-end project examples (single intent walked through the full BMad chain) | (placeholder) |
 | [`other/`](other/) | Catch-all | (placeholder) |
@@ -39,7 +40,7 @@ Density spectrum across the corpus: **3 lines** (one-liner intent, three-line pi
 
 | Metric | Value |
 |---|---|
-| Total entries (active) | 102 |
+| Total entries (active) | 110 |
 | Languages represented | English (primary), Spanish (1 PRD) |
 | Entries with planted Spec Law violations, contradictions, or hallucinations | 10 |
 | Brief→PRD altitude-fidelity pairs | 2 (PomodoroLite, HiveLink) |
@@ -68,6 +69,7 @@ Density spectrum across the corpus: **3 lines** (one-liner intent, three-line pi
 | **bmad-shard-doc** | `prds/prd-hivelink-*`, `prds/prd-medivault-*` — maximalist shard targets |
 | **bmad-document-project** | `prds/prd-aurora-migration-*` style brownfield documentation rehearsal |
 | **bmad-kernel-validate** (if/when it exists) | All of `bmad-spec-kernel/` — 4 clean exemplars to verify pass-through, 4 deliberate-violation studies to verify detection |
+| **bmad-brainstorming** | All of `brainstorming-samples/` — compare the HTML output against the intent file to verify the session explored the right space; test whether bmad-spec can distill a brainstorm output into a kernel |
 | **bmad-bmb (BMad Builder) router** | See the "BMad-bmb reroute candidates" section below — entries whose described product is actually a BMad agent, skill, or workflow in disguise. Tests whether a router skill correctly identifies "this should be built inside BMad, not as a SaaS." |
 
 ---
@@ -247,6 +249,21 @@ Density spectrum across the corpus: **3 lines** (one-liner intent, three-line pi
 | [jobstories-pantry](prds/jobstories-pantry-2026-05-17/jobstories.md) | 149 | Strict JTBD job-stories format |
 | [prfaq-shipnow-launchpad](prds/prfaq-shipnow-launchpad-2026-05-17/prfaq.md) | 170 | Developer-platform PRFAQ; "repo to revenue in 30 minutes"; cannibalization/ICP questions |
 | [rfc-oss-bigissue](prds/rfc-oss-bigissue-2026-05-17/rfc.md) | 287 | OSS RFC + emulated comment thread |
+
+### `brainstorming-samples/` — completed bmad-brainstorming sessions (8)
+
+Each entry contains a `brainstorm.html` (full session output) and, where present, a `brainstorm-intent.md` (structured session summary with top directions and key insights). Two entries have only a `.memlog.md` inside the folder (no separate intent file).
+
+| Entry | HTML lines | Topic | Notes |
+|---|---|---|---|
+| [brainstorm-delightful-laundry](brainstorming-samples/brainstorm-delightful-laundry-2026-05-31/brainstorm-intent.md) | 305 | Making laundry a delight instead of a chore | 66 ideas; 4 techniques; intent file present. Strong consumer-product direction (container system, heated folding bed). *Demo candidate.* |
+| [brainstorm-digital-campfire-software](brainstorming-samples/brainstorm-digital-campfire-software-2026-05-31/brainstorm-intent.md) | 340 | Software that makes the internet feel cozy and human again | Intent file present. Antidote to algorithmic feeds / engagement-farming. |
+| [brainstorm-er-waiting-room-anxiety](brainstorming-samples/brainstorm-er-waiting-room-anxiety-2026-05-31/brainstorm-intent.md) | 270 | Reducing ER waiting-room anxiety without digital/software interventions | 62 ideas; intent file present. Physical space, lighting, human-presence role. Non-digital constraint makes it a good scope-limitation test. |
+| [brainstorm-hospital-discharge-experience](brainstorming-samples/brainstorm-hospital-discharge-experience-2026-05-31/brainstorm-intent.md) | 381 | Redesigning the hospital discharge experience | 62 ideas; 4 techniques; intent file present. |
+| [brainstorm-surprise-70th-birthday](brainstorming-samples/brainstorm-surprise-70th-birthday-2026-05-31/brainstorm-intent.md) | 483 | Planning a 70th birthday for someone who "wants nothing" | Intent file present. Non-product, life-planning topic — tests skill on non-software domain. |
+| [brainstorm-photospot-caching](brainstorming-samples/brainstorm-photospot-caching-2026-05-31/brainstorm-intent.md) | 923 | Geocaching successor using photo-viewpoint alignment | Intent file present (from `.memlog.md`). Most detailed session; BMad YouTube demo candidate (father-daughter series). *Demo candidate.* |
+| [brainstorm-creative-grilling](brainstorming-samples/brainstorm-creative-grilling-2026-06-01/) | 570 | Wild, scroll-stopping grilling ideas for social media | No separate intent file; session log in `.memlog.md`. Social/viral content topic — tests skill on non-product creative domain. |
+| [brainstorm-new-vertical-modules](brainstorming-samples/brainstorm-new-vertical-modules-2026-05-31/) | 686 | New BMad Builder modules for non-software verticals | No separate intent file; session log in `.memlog.md`. 49 module ideas across 3 techniques. **BMad-reroute candidate** — the described product *is* BMad skills/modules. |
 
 ---
 

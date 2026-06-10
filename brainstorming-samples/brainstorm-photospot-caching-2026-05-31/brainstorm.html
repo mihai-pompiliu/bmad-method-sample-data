@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhotoSpot Caching — Brainstorm Keepsake</title>
+<style>
+  :root{
+    --ink:#2b2118;
+    --ink-soft:#5a4a39;
+    --paper:#f6ecd9;
+    --paper-2:#efe1c6;
+    --cream:#fbf5e9;
+    --gold:#d9a441;
+    --gold-deep:#c07a2c;
+    --amber:#e8893a;
+    --rose:#d96b54;
+    --teal:#2f8f8a;
+    --teal-deep:#1f6f6b;
+    --sky:#7fb6c9;
+    --line:rgba(43,33,24,.16);
+    --shadow:0 18px 40px -22px rgba(43,33,24,.55);
+    --reticle:#c07a2c;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 12% -10%, #fff6e6 0%, rgba(255,246,230,0) 55%),
+      radial-gradient(1000px 800px at 100% 0%, #fbe3c2 0%, rgba(251,227,194,0) 50%),
+      linear-gradient(180deg,#f7eed9 0%, #f1e2c4 100%);
+    background-attachment:fixed;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* faint map-grid + contour texture */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(192,122,44,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,122,44,.05) 1px, transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(circle at 50% 30%, #000 0%, rgba(0,0,0,.35) 80%);
+  }
+  .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 22px 90px}
+  .sysfont{font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  a{color:var(--teal-deep)}
+
+  /* ---------- corner-tick framing helper ---------- */
+  .ticks{position:relative}
+  .ticks::before,.ticks::after,
+  .ticks > .tk1,.ticks > .tk2{content:"";position:absolute;width:20px;height:20px;border:2px solid var(--reticle);opacity:.65}
+  .ticks::before{top:10px;left:10px;border-right:0;border-bottom:0}
+  .ticks::after{top:10px;right:10px;border-left:0;border-bottom:0}
+  .ticks .tk1{bottom:10px;left:10px;border-right:0;border-top:0}
+  .ticks .tk2{bottom:10px;right:10px;border-left:0;border-top:0}
+
+  /* =====================  HERO  ===================== */
+  header.hero{
+    position:relative; z-index:1;
+    padding:70px 22px 40px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .kicker{
+    display:inline-flex; align-items:center; gap:10px;
+    letter-spacing:.34em; text-transform:uppercase; font-size:12px; font-weight:700;
+    color:var(--gold-deep);
+    padding:7px 16px; border:1px solid var(--gold); border-radius:999px;
+    background:rgba(255,255,255,.4);
+  }
+  .kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px rgba(217,107,84,.25)}
+  h1.title{
+    font-size:clamp(40px,8vw,86px); line-height:.98; margin:.32em 0 .12em; letter-spacing:-.02em;
+    color:var(--ink);
+  }
+  h1.title .light{
+    background:linear-gradient(95deg,var(--amber),var(--gold),var(--rose));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{max-width:660px; margin:0 auto; font-size:clamp(16px,2.3vw,20px); color:var(--ink-soft)}
+  .verb-loop{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:26px 0 6px;
+    font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; font-weight:700; letter-spacing:.12em;
+  }
+  .verb-loop span{
+    padding:8px 16px; border-radius:999px; font-size:13px; text-transform:uppercase;
+    background:#fff; border:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .verb-loop b{color:var(--gold-deep)}
+  .verb-loop .arrow{align-self:center; color:var(--gold-deep); font-weight:900}
+  .verb-loop .align{background:linear-gradient(120deg,var(--gold) 0%, var(--amber) 100%); color:#fff; border-color:transparent}
+
+  /* ---- viewfinder hero device ---- */
+  .viewfinder{
+    margin:38px auto 6px; max-width:560px;
+  }
+  .vf-shell{
+    position:relative; aspect-ratio:4/3; border-radius:18px; overflow:hidden;
+    box-shadow:0 30px 60px -28px rgba(43,33,24,.7), inset 0 0 0 2px rgba(255,255,255,.4);
+    background:#1d2730;
+  }
+  /* the "reality" layer (a stylized golden-hour scene) */
+  .layer-real{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 78% 26%, rgba(255,224,150,.95) 0 7%, rgba(255,196,110,.45) 7% 14%, transparent 22%),
+      linear-gradient(180deg,#ffd27a 0%, #ffb06a 32%, #e98a55 52%, #b9663f 53%, #7c4a31 100%);
+  }
+  .layer-real .hill{position:absolute; bottom:0; width:160%; height:46%}
+  .layer-real .h1{left:-30%; background:#8a5a3a; clip-path:polygon(0 100%,18% 30%,40% 62%,60% 18%,82% 55%,100% 25%,100% 100%); opacity:.9}
+  .layer-real .h2{left:-10%; bottom:-2%; height:34%; background:#5f3c2a; clip-path:polygon(0 100%,12% 50%,30% 70%,52% 40%,72% 66%,100% 44%,100% 100%)}
+  .layer-real .tower{position:absolute; left:40%; bottom:14%; width:8px; height:34%; background:#3a261b; transform:translateX(-50%)}
+  .layer-real .tower::after{content:"";position:absolute;top:-10px;left:-6px;width:20px;height:14px;background:#3a261b;clip-path:polygon(50% 0,100% 100%,0 100%)}
+  /* ghost target overlay — offset, then aligned by the slider */
+  .layer-ghost{
+    position:absolute; inset:0; opacity:.42; mix-blend-mode:screen;
+    transform:translate(var(--gx,34px),var(--gy,-22px)) rotate(var(--gr,-4deg)) scale(1.04);
+    transition:transform .12s ease;
+    filter:saturate(.4) brightness(1.3);
+  }
+  .layer-ghost::before{
+    content:""; position:absolute; inset:0; border:2px dashed rgba(255,255,255,.85);
+    background:
+      radial-gradient(circle at 78% 26%, rgba(255,255,255,.9) 0 6%, transparent 16%),
+      linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.02));
+  }
+  .layer-ghost .gtower{position:absolute; left:40%; bottom:14%; width:8px; height:34%; background:rgba(255,255,255,.85); transform:translateX(-50%)}
+  .layer-ghost .gtower::after{content:"";position:absolute;top:-10px;left:-6px;width:20px;height:14px;background:rgba(255,255,255,.85);clip-path:polygon(50% 0,100% 100%,0 100%)}
+  .layer-ghost .ghill{position:absolute; bottom:0; left:-10%; width:160%; height:34%; background:rgba(255,255,255,.55); clip-path:polygon(0 100%,12% 50%,30% 70%,52% 40%,72% 66%,100% 44%,100% 100%)}
+  /* reticle/crosshair overlay */
+  .reticle{position:absolute; inset:0; pointer-events:none}
+  .reticle .cross-v,.reticle .cross-h{position:absolute; background:rgba(255,255,255,.5)}
+  .reticle .cross-v{left:50%; top:0; bottom:0; width:1px; transform:translateX(-.5px)}
+  .reticle .cross-h{top:50%; left:0; right:0; height:1px; transform:translateY(-.5px)}
+  .reticle .center{position:absolute; left:50%; top:50%; width:34px; height:34px; transform:translate(-50%,-50%); border:1px solid rgba(255,255,255,.7); border-radius:50%}
+  .reticle .c{position:absolute; width:20px; height:20px; border:2px solid #fff; opacity:.9}
+  .reticle .c.tl{top:14px;left:14px;border-right:0;border-bottom:0}
+  .reticle .c.tr{top:14px;right:14px;border-left:0;border-bottom:0}
+  .reticle .c.bl{bottom:14px;left:14px;border-right:0;border-top:0}
+  .reticle .c.br{bottom:14px;right:14px;border-left:0;border-top:0}
+  /* match badge */
+  .match-badge{
+    position:absolute; top:14px; left:14px; z-index:4;
+    background:rgba(29,39,48,.62); color:#fff; backdrop-filter:blur(3px);
+    border:1px solid rgba(255,255,255,.25); border-radius:10px; padding:6px 10px;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.05em;
+  }
+  .match-badge b{color:var(--gold)}
+  .lock-flash{
+    position:absolute; inset:0; z-index:3; display:flex; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0; transition:opacity .3s;
+    font-family:"Avenir Next",system-ui,sans-serif; font-weight:800; letter-spacing:.3em;
+    color:#fff; text-shadow:0 2px 18px rgba(0,0,0,.5);
+  }
+  .lock-flash.on{opacity:1}
+  .lock-flash .ring{position:absolute; width:120px; height:120px; border:3px solid var(--gold); border-radius:50%; animation:pop .5s ease}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+  /* slider + meter */
+  .vf-controls{margin:16px auto 0; max-width:560px; text-align:left}
+  .vf-controls .hint{font-size:13px; color:var(--ink-soft); margin:0 0 8px; text-align:center}
+  input[type=range].align-slider{
+    -webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:999px;
+    background:linear-gradient(90deg,var(--rose),var(--amber),var(--gold)); outline:none; margin:8px 0 14px;
+  }
+  input[type=range].align-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; width:26px; height:26px; border-radius:50%;
+    background:#fff; border:3px solid var(--gold-deep); cursor:grab; box-shadow:0 4px 12px rgba(0,0,0,.25);
+  }
+  input[type=range].align-slider::-moz-range-thumb{
+    width:26px; height:26px; border-radius:50%; background:#fff; border:3px solid var(--gold-deep); cursor:grab;
+  }
+  .meter{height:14px; border-radius:999px; background:rgba(43,33,24,.1); overflow:hidden; border:1px solid var(--line)}
+  .meter .fill{height:100%; width:8%; border-radius:999px; background:linear-gradient(90deg,var(--teal),var(--gold)); transition:width .1s ease}
+  .meter-row{display:flex; justify-content:space-between; align-items:baseline; margin-top:8px}
+  .meter-row .pct{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-weight:700; font-size:18px}
+  .meter-row .lbl{font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-soft)}
+
+  /* stat strip */
+  .stats{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:42px auto 0; max-width:760px}
+  .stat{
+    flex:1 1 150px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 14px;
+    box-shadow:var(--shadow); text-align:center;
+  }
+  .stat .n{font-size:32px; font-weight:800; color:var(--gold-deep); line-height:1}
+  .stat .t{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); margin-top:6px}
+
+  /* =====================  SECTION SCAFFOLD  ===================== */
+  section{position:relative; z-index:1; margin-top:64px}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px; flex-wrap:wrap}
+  .sec-num{
+    font-family:"SF Mono",ui-monospace,Menlo,monospace; font-weight:700; color:#fff;
+    background:var(--ink); border-radius:8px; padding:4px 9px; font-size:13px; letter-spacing:.06em;
+  }
+  .sec-head h2{font-size:clamp(24px,4vw,34px); margin:0; letter-spacing:-.01em}
+  .sec-head .tag{font-family:"Avenir Next",system-ui,sans-serif; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-deep)}
+  .sec-intro{color:var(--ink-soft); max-width:760px; margin:6px 0 22px; font-size:16px}
+  .divider{height:1px; background:repeating-linear-gradient(90deg,var(--line) 0 8px, transparent 8px 16px); margin:8px 0 0}
+
+  /* generic idea card */
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px 18px;
+    box-shadow:0 12px 26px -20px rgba(43,33,24,.5);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:0 22px 40px -22px rgba(43,33,24,.55)}
+  .card .lead{font-weight:700; color:var(--ink)}
+  .card p{margin:6px 0 0; color:var(--ink-soft); font-size:15px}
+  .chip{
+    display:inline-block; font-family:"Avenir Next",system-ui,sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; border-radius:999px;
+    background:var(--paper-2); color:var(--gold-deep); margin-bottom:8px;
+  }
+
+  /* SCAMPER lens chips */
+  .lens-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px}
+  .lens{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    width:96px; padding:12px 6px; border-radius:14px; background:#fff; border:1px solid var(--line);
+    box-shadow:var(--shadow); text-align:center;
+  }
+  .lens .ring{
+    width:46px; height:46px; border-radius:50%;
+    background:radial-gradient(circle at 32% 30%, #fff 0 16%, var(--sky) 17% 38%, var(--teal-deep) 39% 62%, #1b2a33 63% 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.6), 0 4px 10px rgba(0,0,0,.25);
+  }
+  .lens .ltr{font-family:"Avenir Next",system-ui,sans-serif; font-weight:800; font-size:13px; letter-spacing:.05em; color:var(--ink)}
+  .lens .lw{font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft)}
+  .scamper-block{margin-top:6px}
+  .scamper-block h4{
+    margin:18px 0 8px; font-family:"Avenir Next",system-ui,sans-serif; font-size:13px;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep);
+    display:flex; align-items:center; gap:8px;
+  }
+  .scamper-block h4::before{content:""; width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff 0 18%,var(--teal) 19% 60%,#1b2a33 61%)}
+
+  /* cross-pollination donor cards */
+  .donor{position:relative; padding-top:40px}
+  .donor .badge{
+    position:absolute; top:-12px; left:16px; font-size:22px;
+    width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+    background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  }
+  .donor .donor-name{font-family:"Avenir Next",system-ui,sans-serif; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:8px}
+  .donor ul{margin:0; padding-left:18px}
+  .donor li{margin:6px 0; color:var(--ink-soft); font-size:15px}
+  .donor li b{color:var(--ink)}
+
+  /* biomimetic field-guide cards */
+  .field-card{
+    background:linear-gradient(180deg,#fffaf0,#fbf0db); border:1px solid var(--line);
+    border-radius:14px; padding:0; overflow:hidden; box-shadow:var(--shadow);
+  }
+  .field-card .top{display:flex; align-items:center; gap:12px; padding:14px 16px; background:rgba(47,143,138,.1); border-bottom:1px dashed var(--line)}
+  .field-card .crit{font-size:30px}
+  .field-card .latin{font-family:"Avenir Next",system-ui,sans-serif}
+  .field-card .latin .sp{display:block; font-weight:800; letter-spacing:.04em; color:var(--teal-deep); font-size:15px}
+  .field-card .latin .ital{font-style:italic; color:var(--ink-soft); font-size:12px}
+  .field-card .body{padding:12px 16px 16px; color:var(--ink-soft); font-size:15px}
+  .field-card .body b{color:var(--ink)}
+
+  /* anti-solution fail->fix */
+  .ff{display:grid; grid-template-columns:1fr 44px 1fr; align-items:stretch; gap:0; margin-bottom:14px; border-radius:14px; overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line)}
+  .ff .fail{background:linear-gradient(180deg,#fbe4dc,#f6d3c7); padding:14px 16px}
+  .ff .fix{background:linear-gradient(180deg,#dcefe7,#cae6db); padding:14px 16px}
+  .ff .mid{display:flex; align-items:center; justify-content:center; background:#fff; font-size:18px; color:var(--gold-deep); font-weight:900}
+  .ff .tagx{font-family:"Avenir Next",system-ui,sans-serif; font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin-bottom:6px}
+  .ff .fail .tagx{color:#b3402a}
+  .ff .fix .tagx{color:var(--teal-deep)}
+  .ff p{margin:0; font-size:15px; color:var(--ink)}
+
+  /* sci-fi museum placards */
+  .placard{
+    background:#1e2630; color:#f3e7cf; border-radius:14px; padding:18px 20px;
+    border:1px solid rgba(217,164,65,.4); box-shadow:0 20px 40px -22px rgba(0,0,0,.7);
+    position:relative; overflow:hidden;
+  }
+  .placard::after{content:""; position:absolute; right:-30px; top:-30px; width:120px; height:120px; border-radius:50%; background:radial-gradient(circle,var(--gold) 0,transparent 70%); opacity:.25}
+  .placard .acc{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase}
+  .placard .arti{font-family:"Avenir Next",system-ui,sans-serif; font-weight:800; font-size:17px; margin:6px 0 8px; color:#fff}
+  .placard p{margin:0; font-size:15px; color:#d9cbb0}
+  .placard.spine{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold), 0 20px 40px -18px rgba(0,0,0,.8)}
+  .placard.spine .arti{color:var(--gold)}
+
+  /* trickster cards */
+  .trick{background:#fff; border:1px dashed var(--gold-deep); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow); position:relative}
+  .trick .mark{position:absolute; top:-10px; right:14px; font-size:24px}
+  .trick .lead{font-weight:800; color:var(--ink)}
+  .trick p{margin:6px 0 0; color:var(--ink-soft); font-size:15px}
+
+  /* constraint roulette dials */
+  .dial{background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:var(--shadow)}
+  .dial .head{display:flex; align-items:center; gap:12px; margin-bottom:10px}
+  .dial .wheel{
+    width:52px; height:52px; border-radius:50%; flex:0 0 auto;
+    background:conic-gradient(var(--amber) 0 25%, var(--gold) 25% 50%, var(--teal) 50% 75%, var(--rose) 75% 100%);
+    display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 6px #fff;
+  }
+  .dial .wheel span{font-size:18px}
+  .dial .head .ttl{font-family:"Avenir Next",system-ui,sans-serif; font-weight:800; font-size:14px; letter-spacing:.04em}
+  .dial .head .ttl small{display:block; font-weight:600; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-deep)}
+  .dial ul{margin:0; padding-left:18px}
+  .dial li{margin:6px 0; font-size:15px; color:var(--ink-soft)}
+  .dial li b{color:var(--ink)}
+
+  /* metaphor ladder */
+  .ladder{display:grid; gap:14px}
+  .rung{display:flex; gap:14px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow)}
+  .rung .ic{font-size:24px; flex:0 0 auto; width:40px; text-align:center}
+  .rung .lead{font-weight:700}
+  .rung p{margin:4px 0 0; color:var(--ink-soft); font-size:15px}
+  .ladder-final{
+    margin-top:14px; padding:22px; border-radius:16px; text-align:center;
+    background:linear-gradient(120deg,var(--teal-deep),var(--teal)); color:#fff; box-shadow:var(--shadow);
+  }
+  .ladder-final .small{letter-spacing:.2em; text-transform:uppercase; font-size:12px; opacity:.85}
+  .ladder-final .big{font-size:clamp(20px,3.4vw,28px); font-weight:800; margin:6px 0}
+
+  /* rapid lenses */
+  .rapid{display:grid; gap:12px}
+  .rapid .lensrow{background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:0 10px 24px -20px rgba(43,33,24,.5)}
+  .rapid .lt{font-family:"Avenir Next",system-ui,sans-serif; font-weight:800; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-deep); margin-bottom:6px}
+  .rapid ul{margin:0; padding-left:18px; columns:2; column-gap:26px}
+  .rapid li{margin:4px 0; font-size:14.5px; color:var(--ink-soft); break-inside:avoid}
+  .rapid li b{color:var(--ink)}
+
+  /* =====================  SYNTHESIS  ===================== */
+  .synth{
+    margin-top:80px; padding:46px 26px; border-radius:24px;
+    background:linear-gradient(180deg,#241a12 0%, #322117 60%, #3c2616 100%);
+    color:#f5ead2; box-shadow:0 40px 80px -40px rgba(0,0,0,.8); position:relative; overflow:hidden;
+  }
+  .synth::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(900px 400px at 80% -10%, rgba(217,164,65,.28), transparent 60%);
+    pointer-events:none;
+  }
+  .synth .eyebrow{text-align:center; letter-spacing:.34em; text-transform:uppercase; font-size:12px; color:var(--gold)}
+  .synth h2{text-align:center; font-size:clamp(28px,5vw,44px); margin:.2em 0 .1em; color:#fff}
+  .synth .lede{text-align:center; max-width:640px; margin:0 auto 30px; color:#e3d3b3}
+  .insights{display:grid; gap:16px; position:relative}
+  .ins{
+    display:flex; gap:16px; align-items:flex-start; padding:18px 20px; border-radius:16px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(217,164,65,.25);
+  }
+  .ins .badge{
+    flex:0 0 auto; width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    font-size:22px; background:rgba(217,164,65,.16); border:1px solid rgba(217,164,65,.4);
+  }
+  .ins h3{margin:0 0 4px; font-family:"Avenir Next",system-ui,sans-serif; font-size:16px; color:var(--gold)}
+  .ins p{margin:0; color:#e6d8ba; font-size:15px}
+  .ins.hero-ins{background:linear-gradient(120deg,rgba(217,164,65,.22),rgba(232,137,58,.12)); border-color:var(--gold)}
+
+  /* chosen directions */
+  .chosen{margin-top:30px}
+  .chosen h3{text-align:center; color:#fff; font-size:22px; margin-bottom:18px}
+  .dirs{display:grid; grid-template-columns:repeat(5,1fr); gap:12px}
+  .dir{
+    background:rgba(255,255,255,.06); border:1px solid rgba(217,164,65,.3); border-radius:14px;
+    padding:16px 12px; text-align:center;
+  }
+  .dir .no{font-family:"SF Mono",ui-monospace,Menlo,monospace; font-weight:800; font-size:22px; color:var(--gold)}
+  .dir p{margin:8px 0 0; font-size:13px; color:#e6d8ba}
+
+  /* MVP callout */
+  .mvp{
+    margin-top:34px; border-radius:18px; padding:28px; text-align:center;
+    background:linear-gradient(120deg,var(--gold-deep),var(--amber)); color:#fff;
+    box-shadow:0 24px 50px -24px rgba(0,0,0,.6); position:relative; overflow:hidden;
+  }
+  .mvp .stamp{font-family:"Avenir Next",system-ui,sans-serif; letter-spacing:.3em; text-transform:uppercase; font-size:12px; opacity:.9}
+  .mvp h3{font-size:clamp(22px,4vw,30px); margin:.3em 0 .2em}
+  .mvp p{max-width:620px; margin:0 auto 16px; color:#fff5e6}
+  .stack{display:flex; justify-content:center; flex-wrap:wrap; gap:10px}
+  .stack span{background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); border-radius:999px; padding:6px 14px; font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:13px}
+
+  /* taglines */
+  .taglines{text-align:center; margin-top:40px}
+  .taglines .big{font-size:clamp(26px,5vw,42px); font-weight:800; letter-spacing:-.01em}
+  .taglines .big .stop{color:var(--rose)}
+  .taglines .big .spot{background:linear-gradient(95deg,var(--amber),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .taglines .alt{color:var(--ink-soft); margin-top:8px}
+
+  footer{text-align:center; margin-top:60px; color:var(--ink-soft); font-size:13px}
+  footer .names{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+  footer .names span{font-family:"SF Mono",ui-monospace,Menlo,monospace; background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 12px}
+
+  @media(max-width:760px){
+    .g2,.g3,.dirs{grid-template-columns:1fr}
+    .dirs{grid-template-columns:repeat(2,1fr)}
+    .rapid ul{columns:1}
+    .ff{grid-template-columns:1fr; }
+    .ff .mid{height:36px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <span class="kicker"><span class="dot"></span> Solo Brainstorm · 31 May 2026 · BMad Method</span>
+  <h1 class="title">PhotoSpot <span class="light">Caching</span></h1>
+  <p class="sub">A geocaching successor where the treasure isn't a place — it's an <em>angle</em>. Photograph a viewpoint; hand the world a riddle of light, and let strangers find their way back to exactly where you stood.</p>
+
+  <div class="verb-loop">
+    <span><b>SEE</b></span><span class="arrow">›</span>
+    <span><b>SEEK</b></span><span class="arrow">›</span>
+    <span class="align"><b>ALIGN</b></span><span class="arrow">›</span>
+    <span><b>MATCH</b></span>
+  </div>
+
+  <!-- live viewfinder device -->
+  <div class="viewfinder">
+    <div class="vf-shell" id="vf">
+      <div class="layer-real">
+        <div class="hill h1"></div>
+        <div class="hill h2"></div>
+        <div class="tower"></div>
+      </div>
+      <div class="layer-ghost" id="ghost">
+        <div class="ghill"></div>
+        <div class="gtower"></div>
+      </div>
+      <div class="match-badge">MATCH <b id="badgePct">8%</b> · ALIGNING…</div>
+      <div class="reticle">
+        <div class="cross-v"></div><div class="cross-h"></div>
+        <div class="center"></div>
+        <div class="c tl"></div><div class="c tr"></div><div class="c bl"></div><div class="c br"></div>
+      </div>
+      <div class="lock-flash" id="lock"><div class="ring"></div>LOCKED</div>
+    </div>
+
+    <div class="vf-controls">
+      <p class="hint">Drag to align the ghost-target with reality — that single mechanic <em>is</em> the game.</p>
+      <input type="range" min="0" max="100" value="6" class="align-slider" id="slider" aria-label="Alignment">
+      <div class="meter"><div class="fill" id="fill"></div></div>
+      <div class="meter-row">
+        <span class="lbl">Alignment Score</span>
+        <span class="pct" id="pct">8%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">10</div><div class="t">Techniques</div></div>
+    <div class="stat"><div class="n">104</div><div class="t">Ideas</div></div>
+    <div class="stat"><div class="n">7</div><div class="t">Insights</div></div>
+    <div class="stat"><div class="n">5</div><div class="t">Chosen Directions</div></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== 01 First Principles ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>First Principles</h2>
+      <span class="tag">Strip to bedrock truths</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Before mechanics, before money — what is irreducibly true about this game? The verb isn't <em>locate</em>. It's <strong>align</strong>.</p>
+    <div class="grid g2">
+      <div class="card"><span class="chip">The Loop</span><div class="lead">SEE → SEEK → ALIGN → MATCH</div><p>The verb is <b>ALIGN</b>, not "locate." Build everything around alignment, never around coordinates.</p></div>
+      <div class="card"><span class="chip">The Heartbeat</span><div class="lead">A 0–100% match score</div><p>On-device image-feature matching compares the hunter's live camera against the target photo. The score is the game's pulse.</p></div>
+      <div class="card"><span class="chip">The Magic</span><div class="lead">Live hotter / colder</div><p>An augmented viewfinder shows a 30% ghost of the target; align the ghost with reality to win — the single most delightful mechanic.</p></div>
+      <div class="card"><span class="chip">The Twist</span><div class="lead">Withholding GPS <em>is</em> the fun</div><p>The scarcity of coordinates forces human vision + clues to do the navigating. The weakness is the design.</p></div>
+      <div class="card"><span class="chip">Fair by Nature</span><div class="lead">Spoof-resistant by design</div><p>You must physically reproduce a perceptual viewpoint — so anti-cheat is baked into the core mechanic (unlike pure-GPS games).</p></div>
+      <div class="card"><span class="chip">The Atom</span><div class="lead">Everything is a "Spot"</div><p><span class="mono">{ anchor photo, area polygon, clues, difficulty, hints[] }</span> — one tidy object the whole game is built from.</p></div>
+      <div class="card"><span class="chip">Minimum Viable Magic</span><div class="lead">Hide → Find → Confirm</div><p>One person hides a spot, another finds it, the app confirms the match. If that single loop feels good, the game works.</p></div>
+      <div class="card"><span class="chip">Zero Content Cost</span><div class="lead">The world is the board</div><p>Players generate every location — a content perpetual-motion machine with no operator authoring burden.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== 02 SCAMPER ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>SCAMPER</h2>
+      <span class="tag">Seven lenses on the core mechanic</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Swap a lens; the whole game re-focuses. Each of SCAMPER's seven prompts twisted the mechanic into a new mode.</p>
+
+    <div class="lens-row">
+      <div class="lens"><span class="ring"></span><span class="ltr">S</span><span class="lw">Substitute</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">C</span><span class="lw">Combine</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">A</span><span class="lw">Adapt</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">M</span><span class="lw">Modify</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">P</span><span class="lw">Put to Use</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">E</span><span class="lw">Eliminate</span></div>
+      <div class="lens"><span class="ring"></span><span class="ltr">R</span><span class="lw">Reverse</span></div>
+    </div>
+
+    <div class="scamper-block">
+      <h4>Substitute</h4>
+      <div class="grid g3">
+        <div class="card"><div class="lead">Motion Caches</div><p>Swap the still photo for a 3-second video pan — reproduce the camera <b>motion</b>, not just a frame.</p></div>
+        <div class="card"><div class="lead">Audio Caches</div><p>Swap sight for sound — record a spot's ambient soundscape (a fountain, a train crossing) and hunt by ear.</p></div>
+        <div class="card"><div class="lead">AI Starter Spots</div><p>Swap the human creator for AI — auto-generate synthetic spots from Street View so no region launches empty.</p></div>
+      </div>
+      <h4>Combine</h4>
+      <div class="grid g2">
+        <div class="card"><div class="lead">PhotoSpot Trek</div><p>Combine with fitness: distance walked + spots found = a combined score. Bridges to the Family Fitness app in the series.</p></div>
+        <div class="card"><div class="lead">Narrative Trails</div><p>Combine with storytelling: chain spots so each find reveals the next clue plus a paragraph — a neighborhood becomes a choose-your-path novel.</p></div>
+        <div class="card"><div class="lead">AR Reward Drops</div><p>Combine with AR: nailing the alignment spawns an AR object anchored exactly there, visible only from that viewpoint.</p></div>
+      </div>
+      <h4>Adapt</h4>
+      <div class="grid g2">
+        <div class="card"><div class="lead">The Daily Spot</div><p>Adapt the Wordle pattern: one shared daily spot, share your score, build streaks.</p></div>
+        <div class="card"><div class="lead">Passport Stamps</div><p>Adapt letterboxing: every spot has a unique stamp/sigil you collect in a passport.</p></div>
+      </div>
+      <h4>Modify / Magnify</h4>
+      <div class="grid g2">
+        <div class="card"><div class="lead">Difficulty Tiers</div><p>Plaza (easy, wide area) → Alley (medium) → Needle (brutal: a crack in one brick, a reflection in one window).</p></div>
+        <div class="card"><div class="lead">Area-Precision Dial</div><p>A creator-set difficulty dial: a generous 500m radius for beginners vs. a cruel "somewhere in this district" for experts.</p></div>
+      </div>
+      <h4>Put to Use</h4>
+      <div class="grid g3">
+        <div class="card"><div class="lead">Tourism</div><p>Boards sponsor spots to drive foot traffic to hidden gems — "find our town's best-kept secret viewpoint."</p></div>
+        <div class="card"><div class="lead">Education</div><p>"Then-and-now" caches: the target is a historical photo; find where it was taken and see how the place changed.</p></div>
+        <div class="card"><div class="lead">Accessibility</div><p>Spots documenting wheelchair-accessible viewpoints — the hunt crowdsources accessibility data.</p></div>
+      </div>
+      <h4>Eliminate</h4>
+      <div class="grid g2">
+        <div class="card"><div class="lead">Blind Mode</div><p>Eliminate GPS entirely: only clues + visual matching, no map dot — pure detective mode.</p></div>
+        <div class="card"><div class="lead">Zen Mode</div><p>Eliminate the timer: wander and find spots serendipitously. Two moods — Race vs. Stroll.</p></div>
+      </div>
+      <h4>Reverse</h4>
+      <div class="grid g2">
+        <div class="card"><div class="lead">GeoGuessr Flip</div><p>Reverse it: given a photo, guess <b>where</b> in the world it is, then go verify in person.</p></div>
+        <div class="card"><div class="lead">Bounty Mode</div><p>Reverse hider/seeker: seekers <b>request</b> a view ("photograph the top of X hill") and hiders fulfill it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 Cross-Pollination ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>Cross-Pollination</h2>
+      <span class="tag">Steal moves from distant worlds</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Borrow the proven mechanics of casinos, ERs, beekeepers, Netflix, NatGeo, and museums — and bend each toward the hunt.</p>
+    <div class="grid g2">
+      <div class="card donor"><div class="badge">🎰</div><div class="donor-name">Casino</div>
+        <ul>
+          <li><b>Jackpot spots:</b> variable-ratio rewards — rare drops unpredictably; the slot-machine pull sustains hunting.</li>
+          <li><b>Near-miss feedback:</b> a gentle "SO close!" at 85% alignment to trigger one-more-try (used ethically).</li>
+          <li><b>Loyalty tiers:</b> frequent hunters unlock cosmetic map themes and exclusive spot access.</li>
+        </ul>
+      </div>
+      <div class="card donor"><div class="badge">🏥</div><div class="donor-name">ER Triage</div>
+        <ul>
+          <li><b>Flow-state matchmaking:</b> read player skill from past scores; serve spots at the edge of their ability.</li>
+          <li><b>"Stabilize first" onboarding:</b> the first spot is impossible to fail (your own doorstep) — a guaranteed dopamine hit.</li>
+        </ul>
+      </div>
+      <div class="card donor"><div class="badge">🐝</div><div class="donor-name">Beekeeping</div>
+        <ul>
+          <li><b>Swarm-sourced hints:</b> finders leave a directional "waggle" breadcrumb for the next hunter — emergent collective trails.</li>
+          <li><b>Pollination boost:</b> finding a spot raises its visibility; unfound spots get a boost so nothing stays lost forever.</li>
+        </ul>
+      </div>
+      <div class="card donor"><div class="badge">📺</div><div class="donor-name">Netflix</div>
+        <ul>
+          <li><b>"Spots For You":</b> a personalized feed ranked by taste — water views, street art, rooftops.</li>
+          <li><b>"Because you found X":</b> recommendations chaining you through a city.</li>
+        </ul>
+      </div>
+      <div class="card donor"><div class="badge">🌍</div><div class="donor-name">NatGeo</div>
+        <ul>
+          <li><b>Light-gated spots:</b> a cherry-blossom spot active only in spring; a golden-hour spot — teaches you to see light.</li>
+          <li><b>Migrating spots:</b> caches tied to things that move on a schedule (a food truck, a tide pool) — time-sensitive hunts.</li>
+        </ul>
+      </div>
+      <div class="card donor"><div class="badge">🏛️</div><div class="donor-name">Museum</div>
+        <ul>
+          <li><b>Curated exhibitions:</b> themed collections by guest curators — "Hidden Reflections of Chicago."</li>
+          <li><b>Provenance:</b> each spot shows its first-finder and a find-history guestbook.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 Nature's Solutions ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>Nature's Solutions</h2>
+      <span class="tag">A biomimetic field guide</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Organisms have spent eons perfecting how to hide, seek, signal, and camouflage. Each one is a mechanic in disguise.</p>
+    <div class="grid g2">
+      <div class="field-card"><div class="top"><span class="crit">🐦</span><div class="latin"><span class="sp">Cuckoo</span><span class="ital">brood parasite — hiding in plain sight</span></div></div><div class="body">A real cache hidden inside an <b>obvious tourist photo</b> — the prize is a tiny overlooked detail in a famous view.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">🎣</span><div class="latin"><span class="sp">Anglerfish</span><span class="ital">the lure that deceives</span></div></div><div class="body">A beautiful obvious decoy draws you in, but the true alignment point is <b>slightly off</b> from where you'd naturally stand.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">✨</span><div class="latin"><span class="sp">Firefly</span><span class="ital">synchronized signaling</span></div></div><div class="body">Neighborhood <b>flash-mob events</b> — everyone hunts one spot in a window, and the map lights up with finds.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">🐙</span><div class="latin"><span class="sp">Octopus</span><span class="ital">adaptive camouflage</span></div></div><div class="body"><b>Camouflaged spots</b> that blend into mundane surroundings; the art is in noticing — rewards trained perception.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">🐜</span><div class="latin"><span class="sp">Ant</span><span class="ital">pheromone trails</span></div></div><div class="body">Popular routes between spots <b>strengthen</b> and get recommended; abandoned ones fade — self-organizing tour routes.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">🐟</span><div class="latin"><span class="sp">Salmon</span><span class="ital">spawning return</span></div></div><div class="body">Spots that annually <b>return</b> to the same place and season, building tradition and pilgrimage.</div></div>
+      <div class="field-card"><div class="top"><span class="crit">🌄</span><div class="latin"><span class="sp">Dawn Chorus</span><span class="ital">first-light behavior</span></div></div><div class="body">A <b>"dawn patrol"</b> mode rewarding early-morning finds — best light, no crowds.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== 05 Reverse / Anti-Solution ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>Anti-Solution</h2>
+      <span class="tag">Every way to fail → flipped into a safeguard</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">List every way to sink the game, then invert each failure into a design that floats it. The strongest defenses were born here.</p>
+
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Impossible-to-find spots frustrate everyone.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>Hunters rate clue quality; low-rated spots auto-hide until the creator improves them.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Trivially cheatable by screenshotting a find.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>Liveness check — capture via live camera with gyro orientation + rough GPS + timestamp. Compass must match the target's heading, not just a matching image.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Sends people into danger — private property, cliffs, tracks.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>Creators attest public/legal access; auto-reject spots on private parcels or near rail/water hazards; a "safe approach" indicator + no-trespass pledge before reveal; community flagging.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Dead-empty map in a new city.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>AI-seeded starter spots from Street View so every city launches non-empty; "Founder" status + bonus rewards for the first creators in a virgin area.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Creepy / stalkery misuse — luring someone.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>No spots near schools/homes, no spot-tied private messaging, rapid takedown on report.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Boring once you've found everything nearby.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>Procedurally infinite AI-proposed spots + a travel mode surfacing spots in new cities. UGC supply scales with the player base — Waze/Wikipedia dynamics.</p></div></div>
+    <div class="ff"><div class="fail"><div class="tagx">Fail</div><p>Battery/data drain from constant camera + GPS.</p></div><div class="mid">→</div><div class="fix"><div class="tagx">Fix</div><p>On-device lightweight matching + a low-power "cold trail" mode that wakes the camera only within range.</p></div></div>
+  </section>
+
+  <!-- ===== 06 Sci-Fi Artifact ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2>Artifacts From the Future</h2>
+      <span class="tag">Relics from the world where this app won</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Museum placards from 2035, describing a world where PhotoSpot Caching became the default reason people look up.</p>
+    <div class="grid g2">
+      <div class="placard"><div class="acc">Exhibit · 2035</div><div class="arti">"EarthLens — every street corner is a level."</div><p>The default reason people explore on weekends. Tourism boards integrate it into their guides.</p></div>
+      <div class="placard"><div class="acc">Permanent Collection</div><div class="arti">The First-Find Provenance Badge</div><p>"I was the first human to align this view." A verified, permanent public record — collectible without crypto.</p></div>
+      <div class="placard"><div class="acc">Wearable Tech</div><div class="arti">AR-Glasses Native</div><p>The ghost-target overlay floats in your vision; the whole world becomes a persistent treasure layer you toggle on.</p></div>
+      <div class="placard spine"><div class="acc">Series Spine ★</div><div class="arti">Memory Cache</div><p>Photograph a spot meaningful to you — where you proposed, where grandpa's shop stood — and leave it as a time-capsule for others to find. Emotional geocaching.</p></div>
+      <div class="placard spine"><div class="acc">Series Spine ★</div><div class="arti">Generational Hand-Down</div><p>A dad creates a spot for his daughter to find in ten years — geo-anchored letters to the future. The perfect spine for the family YouTube series.</p></div>
+      <div class="placard"><div class="acc">Civic Archive</div><div class="arti">World Memory Map</div><p>A planetary archive of human viewpoints that, over decades, becomes a then-and-now record of a changing planet — even used to help rebuild a town after a disaster.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== 07 Trickster's Gambit ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <h2>Trickster's Gambit</h2>
+      <span class="tag">Cheat, invert, break sacred rules</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Mine the devious: mind-bending spot designs and the growth hacks that make the game spread itself.</p>
+    <div class="grid g2">
+      <div class="trick"><span class="mark">🪞</span><div class="lead">Mirror Spot</div><p>The place you must stand is the <b>reflection</b>, not the subject — a mind-bending alignment puzzle.</p></div>
+      <div class="trick"><span class="mark">🤸</span><div class="lead">Forced-Perspective Spot</div><p>Alignment only works if you crouch or climb to recreate an illusion — holding the sun, tiny-person tricks.</p></div>
+      <div class="trick"><span class="mark">😈</span><div class="lead">"IMPOSSIBLE" Troll Spots</div><p>Clearly-labeled, fiendish-by-design spots for masochist experts. Strictly opt-in.</p></div>
+      <div class="trick"><span class="mark">📹</span><div class="lead">The Alignment-Reveal GIF</div><p>Every find auto-generates a shareable GIF of your photo <b>morphing into the target</b> — inherently viral, free marketing, perfect for Shorts.</p></div>
+      <div class="trick"><span class="mark">🪙</span><div class="lead">Ethical Monetization</div><p>Sell only hint reveals (pay-to-skip-frustration, never pay-to-win) + cosmetic map skins + a creator tip jar.</p></div>
+      <div class="trick"><span class="mark">🚪</span><div class="lead">Trickster Onboarding</div><p>The tutorial spot is literally "photograph your own front door from the angle shown" — teaches alignment with zero travel.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== 08 Constraint Roulette ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <h2>Constraint Roulette</h2>
+      <span class="tag">Spin the dial — find the MVP</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">Three brutal constraints, three reveals. The "One Feature Only" spin found the whole game in a single mechanic.</p>
+    <div class="grid g3">
+      <div class="dial"><div class="head"><div class="wheel"><span>🎯</span></div><div class="ttl">Keep the Viewfinder<small>One Feature Only</small></div></div>
+        <ul><li><b>Live alignment viewfinder</b> — ghost overlay + match score. That single mechanic IS the game, the demo money-shot, and the viral reveal. Everything else is scaffolding.</li></ul>
+      </div>
+      <div class="dial"><div class="head"><div class="wheel"><span>⏱️</span></div><div class="ttl">Series MVP<small>Ship in 60 Minutes</small></div></div>
+        <ul>
+          <li><b>Supabase</b> table of Spots (photo in storage, lat/lng, radius, clues) + <b>Next.js</b> map (Leaflet/Mapbox) + camera capture + a similarity score.</li>
+          <li><b>Simplest magic:</b> one CLIP embedding-similarity call — upload your photo, compare embeddings, return a score. One API call = the wow.</li>
+        </ul>
+      </div>
+      <div class="dial"><div class="head"><div class="wheel"><span>💰</span></div><div class="ttl">Mine for Steals<small>1000× Budget</small></div></div>
+        <ul>
+          <li>Global "Spot Olympics" live events; official national photo trails with every tourism board — <b>steal the "official town trail,"</b> skip the rest.</li>
+          <li>A dedicated physical viewfinder device (a modern View-Master) — skip the hardware, but <b>the ghost-overlay viewfinder is the real steal.</b></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 09 Metaphor Mapping + Laddering ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">09</span>
+      <h2>Metaphor &amp; Laddering</h2>
+      <span class="tag">Declare the image, climb to the need</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">"A treasure map drawn in light" — X marks an <em>angle</em>, not a place. Then we laddered each metaphor down to the human need beneath it.</p>
+    <div class="ladder">
+      <div class="rung"><span class="ic">🗺️</span><div><div class="lead">A treasure map drawn in light</div><p>X marks an <b>angle</b>, not a place; the treasure is a viewpoint. Creator clues become poetic <b>riddles</b> — a riddle-writing mini-craft with an AI riddle-helper.</p></div></div>
+      <div class="rung"><span class="ic">⛏️</span><div><div class="lead">Buried vs. surface treasure</div><p>Some spots require effort or a climb (buried); some are easy (surface). <b>Depth = difficulty.</b></p></div></div>
+      <div class="rung"><span class="ic">🎵</span><div><div class="lead">A duet — harmonizing two views</div><p>Two-player <b>live duets</b> racing to align the same spot — real-time multiplayer.</p></div></div>
+      <div class="rung"><span class="ic">🎼</span><div><div class="lead">Cover songs</div><p>Re-create a famous photographer's iconic shot — a homage / tribute mode.</p></div></div>
+      <div class="rung"><span class="ic">🌿</span><div><div class="lead">Slow tech &amp; connection</div><p>Gets you outside, present, walking — a wellness angle. Leave a kind observation for the next finder ("sit here at sunset, it's worth it"). Communities adopt local spots; the game deepens belonging.</p></div></div>
+    </div>
+    <div class="ladder-final">
+      <div class="small">Laddered to bedrock</div>
+      <div class="big">Re-enchanting the ordinary world</div>
+      <div>The product is renewed <b>attention</b> — an antidote to doom-scrolling. A reason to look up.</div>
+    </div>
+  </section>
+
+  <!-- ===== 10 Rapid Lenses ===== -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">10</span>
+      <h2>Rapid Lenses</h2>
+      <span class="tag">A quick burst through six framings</span>
+    </div>
+    <div class="divider"></div>
+    <p class="sec-intro">A fast pass through emerging tech, time, ritual, community economy, business moat, and brand.</p>
+    <div class="rapid">
+      <div class="lensrow"><div class="lt">🤖 Emerging Tech / AI</div>
+        <ul>
+          <li><b>Auto-write three clue variants</b> (easy/medium/cryptic) so creators needn't wordsmith.</li>
+          <li><b>Auto-rate difficulty</b> by how distinctive a scene is.</li>
+          <li><b>"Describe this view"</b> narration for low-vision players.</li>
+        </ul>
+      </div>
+      <div class="lensrow"><div class="lt">⏳ Then-and-Now / Time</div>
+        <ul>
+          <li><b>Historical-society mode:</b> overlay a 1920 photo, find the modern vantage, blend old + new.</li>
+          <li><b>Personal Time Machine:</b> revisit your own old spots years later; watch your life's backdrop change.</li>
+        </ul>
+      </div>
+      <div class="lensrow"><div class="lt">🕯️ Ritual</div>
+        <ul>
+          <li><b>Pilgrimage collections:</b> linked spots completed as a journey with a completion certificate.</li>
+          <li><b>Solstice / equinox</b> special spots with ritual timing.</li>
+        </ul>
+      </div>
+      <div class="lensrow"><div class="lt">🤝 Community Economy</div>
+        <ul>
+          <li><b>Spot Clubs</b> with neighborhood leaderboards and club-vs-club seasons.</li>
+          <li><b>Creator reputation:</b> beloved curators get followers — "follow this curator for new drops."</li>
+          <li><b>Community-funded bounties</b> to get a hard-to-reach spot documented.</li>
+        </ul>
+      </div>
+      <div class="lensrow"><div class="lt">🏰 Business Moat</div>
+        <ul>
+          <li><b>The dataset is the moat:</b> human-curated georeferenced viewpoints — uniquely valuable for AR, mapping, tourism, ML — compounding over time.</li>
+          <li><b>B2B license</b> of anonymized "best viewpoints" data.</li>
+          <li><b>Freemium</b> pro tier: advanced stats, unlimited hints, offline city packs.</li>
+          <li><b>Sponsored spots</b> ending at a local cafe ("show this find for a free coffee") — foot traffic + revenue share.</li>
+        </ul>
+      </div>
+      <div class="lensrow"><div class="lt">🎨 Branding</div>
+        <ul>
+          <li><b>Names:</b> Parallax · Vantage · EarthLens · Spotted · Re:View · Frame Hunt · Same Spot.</li>
+          <li><b>Mascot:</b> a friendly wandering "Scout" — kid-friendly for the family demo.</li>
+          <li><b>Couch Mode</b> for non-walkers; <b>golden-hour nudge</b> ("perfect light in 20 min near you").</li>
+          <li><b>Photo-quality bonus:</b> better composition scores higher — subtly teaching a kid to shoot.</li>
+          <li><b>Family Expeditions:</b> a shared family board found together — the direct bridge to the dad-daughter series.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SYNTHESIS ===================== -->
+  <section class="synth ticks">
+    <span class="tk1"></span><span class="tk2"></span>
+    <div class="eyebrow">The Develop Phase</div>
+    <h2>Synthesis</h2>
+    <p class="lede">104 ideas converged on seven truths. The first one is the whole game.</p>
+
+    <div class="insights">
+      <div class="ins hero-ins">
+        <div class="badge">🎯</div>
+        <div>
+          <h3>The Irreducible Magic</h3>
+          <p>The live ghost-overlay alignment viewfinder + a 0–100% match score. It is simultaneously the MVP, the demo money-shot, and the viral reveal GIF. <b>Build THIS first; everything else is amplification.</b></p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="badge">🛡️</div>
+        <div>
+          <h3>The Genius Is the Constraint</h3>
+          <p>Withholding GPS precision is what makes the game <b>both fun</b> (human vision must navigate) <b>and cheat-proof</b> (you must physically reproduce a viewpoint). The apparent weakness vs. Pokémon Go is the entire moat — fun and fairness flow from the same choice.</p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="badge">♾️</div>
+        <div>
+          <h3>Content Perpetual-Motion Machine</h3>
+          <p>Players generate infinite levels; the operator only curates + AI-seeds empty regions. Supply scales with the player base (Waze/Wikipedia dynamics), and the accumulated viewpoint dataset becomes a compounding, defensible moat.</p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="badge">💞</div>
+        <div>
+          <h3>The Emotional Layer Is the Elevator</h3>
+          <p>"Memory caches" and generational hand-downs — a dad leaving a spot for his daughter to find in ten years — turn a game into something meaningful. And it's the perfect narrative spine for the father-daughter YouTube series. <b>The demo app and the emotional story are the same thing.</b></p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="badge">👀</div>
+        <div>
+          <h3>The Brand Soul</h3>
+          <p>The real product is renewed <b>attention</b> — re-enchanting the ordinary world, an antidote to doom-scrolling. "Stop scrolling. Start spotting." This is both the marketing and the meaning.</p>
+        </div>
+      </div>
+      <div class="ins">
+        <div class="badge">🧱</div>
+        <div>
+          <h3>Buildable on the Series Stack</h3>
+          <p>MVP = Next.js + Supabase + Vercel, with a CLIP-embedding similarity call doing the "match." It satisfies the series' "easy to build" constraint <b>while being something that doesn't exist yet</b> — exactly the confidence-bomb the prior session wanted: build something real that's never been made, on camera.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chosen">
+      <h3>Five Chosen Directions</h3>
+      <div class="dirs">
+        <div class="dir"><div class="no">01</div><p>Ghost-overlay alignment + embedding match score, on web.</p></div>
+        <div class="dir"><div class="no">02</div><p>Anti-cheat by design — perceptual reproduction + gyro/GPS liveness.</p></div>
+        <div class="dir"><div class="no">03</div><p>Memory / legacy caches — emotional hook &amp; family-series spine.</p></div>
+        <div class="dir"><div class="no">04</div><p>"Stop scrolling, start spotting" brand soul.</p></div>
+        <div class="dir"><div class="no">05</div><p>Perpetual UGC + AI seeding so maps are never empty.</p></div>
+      </div>
+    </div>
+
+    <div class="mvp ticks">
+      <span class="tk1"></span><span class="tk2"></span>
+      <div class="stamp">★ The MVP to Build ★</div>
+      <h3>The Live Alignment Viewfinder</h3>
+      <p>One person hides a Spot; another aligns the ghost-overlay against reality; a single CLIP-embedding call returns a 0–100% match. That one loop is the game, the demo, and the share. Ship it on the series stack:</p>
+      <div class="stack">
+        <span>Next.js</span><span>Supabase</span><span>Vercel</span><span>CLIP embeddings</span><span>Camera + Gyro</span>
+      </div>
+    </div>
+
+    <div class="taglines">
+      <div class="big"><span class="stop">Stop scrolling.</span> <span class="spot">Start spotting.</span></div>
+      <div class="alt">— or — "Find the world, one angle at a time."</div>
+    </div>
+  </section>
+
+  <footer>
+    <div>A solo BMad Method brainstorm · PhotoSpot Caching · 31 May 2026</div>
+    <div>10 techniques · 104 ideas · 7 insights · 5 chosen directions</div>
+    <div class="names">
+      <span>Parallax</span><span>Vantage</span><span>EarthLens</span><span>Spotted</span><span>Re:View</span><span>Frame Hunt</span><span>Same Spot</span>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+(function(){
+  var slider = document.getElementById('slider');
+  var fill   = document.getElementById('fill');
+  var pct    = document.getElementById('pct');
+  var badge  = document.getElementById('badgePct');
+  var ghost  = document.getElementById('ghost');
+  var lock   = document.getElementById('lock');
+  var badgeWrap = document.querySelector('.match-badge');
+
+  // starting offset of the ghost (misaligned). As slider -> 100, offset -> 0.
+  var startX = 34, startY = -22, startR = -4;
+  var locked = false;
+
+  function update(){
+    var v = parseInt(slider.value,10);          // 0..100 raw drag
+    // Map drag to a match score that eases toward 100 and snaps the last few %
+    var score = Math.round(8 + (v/100)*92);
+    if(score>100) score=100;
+
+    // ghost interpolates toward perfect alignment
+    var t = v/100;
+    var gx = startX*(1-t);
+    var gy = startY*(1-t);
+    var gr = startR*(1-t);
+    ghost.style.setProperty('--gx', gx.toFixed(1)+'px');
+    ghost.style.setProperty('--gy', gy.toFixed(1)+'px');
+    ghost.style.setProperty('--gr', gr.toFixed(2)+'deg');
+    // ghost grows fainter (merges into reality) as it aligns
+    ghost.style.opacity = (0.46 - 0.30*t).toFixed(3);
+
+    fill.style.width = score + '%';
+    pct.textContent  = score + '%';
+    badge.textContent = score + '%';
+
+    // color the score
+    var col = score>=98 ? '#2f8f8a' : (score>=85 ? '#d9a441' : '#5a4a39');
+    pct.style.color = col;
+
+    // near-miss + lock states
+    if(score>=98){
+      if(!locked){ locked=true; lock.classList.add('on'); }
+      badgeWrap.innerHTML = 'MATCH <b style="color:#7be0a0">'+score+'%</b> · LOCKED ✓';
+    } else {
+      if(locked){ locked=false; lock.classList.remove('on'); }
+      var state = score>=85 ? 'SO CLOSE…' : 'ALIGNING…';
+      badgeWrap.innerHTML = 'MATCH <b id="badgePct">'+score+'%</b> · '+state;
+    }
+  }
+  slider.addEventListener('input', update);
+  update();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wild Creative Grilling — 80 Ideas Around the Fire</title>
+<style>
+  :root{
+    --char:#0c0a09;
+    --char2:#161210;
+    --smoke:#a8a29e;
+    --smoke-dim:#78716c;
+    --ash:#d6d3d1;
+    --ember:#ff6b1a;
+    --ember-hot:#ff9d2e;
+    --ember-deep:#e0410f;
+    --blood:#c41e0d;
+    --gold:#ffcf5c;
+    --blue:#3b6bd6;
+    --pink:#ff5b8a;
+    --flame: linear-gradient(120deg,#ffcf5c 0%,#ff9d2e 28%,#ff6b1a 55%,#e0410f 78%,#a81208 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1100px 700px at 50% -8%, #2a1407 0%, rgba(42,20,7,0) 60%),
+      radial-gradient(900px 600px at 12% 30%, #1e0e06 0%, rgba(30,14,6,0) 55%),
+      radial-gradient(900px 600px at 88% 70%, #1a0c06 0%, rgba(26,12,6,0) 55%),
+      var(--char);
+    color:var(--ash);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  /* ---------- ambient embers ---------- */
+  .embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .ember{
+    position:absolute;bottom:-20px;width:4px;height:4px;border-radius:50%;
+    background:radial-gradient(circle,#ffd27a 0%,#ff7a1f 45%,rgba(255,122,31,0) 75%);
+    opacity:0;animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0) scale(1);opacity:0}
+    8%{opacity:.9}
+    70%{opacity:.7}
+    100%{transform:translateY(-105vh) translateX(40px) scale(.3);opacity:0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ember,.heatshimmer,.flick,.drift,.whoosh{animation:none !important}
+  }
+
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* ---------- header ---------- */
+  header{padding:74px 0 30px;text-align:center;position:relative}
+  .heatshimmer{
+    position:absolute;inset:auto 0 -40px 0;height:140px;
+    background:radial-gradient(60% 100% at 50% 100%, rgba(255,107,26,.22), rgba(255,107,26,0) 70%);
+    filter:blur(6px);animation:shimmer 4.5s ease-in-out infinite;pointer-events:none;
+  }
+  @keyframes shimmer{0%,100%{transform:scaleY(1);opacity:.7}50%{transform:scaleY(1.18);opacity:1}}
+  .kicker{
+    letter-spacing:.42em;text-transform:uppercase;font-size:12px;font-weight:700;
+    color:var(--ember-hot);margin-bottom:18px;
+  }
+  h1{
+    font-size:clamp(38px,7vw,76px);line-height:1.02;font-weight:900;letter-spacing:-.02em;
+    background:var(--flame);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 38px rgba(255,107,26,.25);
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,.4));
+  }
+  h1 .flick{display:inline-block;animation:flick 2.2s ease-in-out infinite}
+  @keyframes flick{0%,100%{transform:rotate(-2deg) scale(1)}45%{transform:rotate(3deg) scale(1.12)}}
+  .sub{margin:20px auto 0;max-width:680px;color:var(--smoke);font-size:18px}
+  .goal{
+    margin:26px auto 0;max-width:640px;display:inline-block;
+    border:1px solid rgba(255,107,26,.3);border-radius:999px;padding:11px 24px;
+    background:rgba(255,107,26,.06);color:var(--ash);font-size:15px;
+  }
+  .goal b{color:var(--ember-hot)}
+
+  .stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .stat{
+    background:linear-gradient(180deg,#211814,#16100d);border:1px solid #3a2a20;
+    border-radius:14px;padding:16px 22px;min-width:120px;
+  }
+  .stat .n{font-size:34px;font-weight:900;background:var(--flame);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
+  .stat .l{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke-dim);margin-top:6px}
+
+  .lenses{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:36px auto 0;max-width:900px}
+  .lens-chip{
+    font-size:12.5px;padding:8px 15px;border-radius:999px;
+    background:#1b1310;border:1px solid #3a2a20;color:var(--smoke);
+    display:flex;align-items:center;gap:7px;transition:.2s;
+  }
+  .lens-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--ember)}
+  .lens-chip.invented .dot{background:var(--gold)}
+  .lens-chip.pushed .dot{background:var(--blood)}
+  .lens-chip:hover{border-color:var(--ember);color:#fff;transform:translateY(-2px)}
+
+  /* ---------- section scaffolding ---------- */
+  section{margin:78px 0;position:relative}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+  .sec-num{
+    font-size:54px;font-weight:900;line-height:.8;color:transparent;
+    -webkit-text-stroke:1.5px rgba(255,107,26,.5);
+  }
+  .sec-title{font-size:clamp(24px,3.6vw,38px);font-weight:800;letter-spacing:-.01em}
+  .sec-tag{
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:5px 12px;border-radius:6px;
+    border:1px solid #3a2a20;color:var(--smoke-dim);align-self:center;
+  }
+  .sec-tag.invented{color:var(--gold);border-color:rgba(255,207,92,.4);background:rgba(255,207,92,.06)}
+  .sec-tag.pushed{color:var(--blood);border-color:rgba(196,30,13,.4);background:rgba(196,30,13,.08)}
+  .sec-desc{color:var(--smoke);font-size:15.5px;margin:-12px 0 24px;max-width:780px}
+
+  .idea-n{font-weight:900;color:var(--ember-hot);font-variant-numeric:tabular-nums}
+
+  /* ============ 1. ROLE PLAYING — character cards ============ */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:16px}
+  .rp-card{
+    background:linear-gradient(165deg,#231711,#140d0a);
+    border:1px solid #3d2b20;border-radius:16px;padding:18px;position:relative;overflow:hidden;
+    transition:.25s;
+  }
+  .rp-card:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--flame)}
+  .rp-card:hover{transform:translateY(-4px);border-color:var(--ember);box-shadow:0 14px 40px rgba(224,65,15,.22)}
+  .rp-emoji{font-size:30px;filter:drop-shadow(0 0 8px rgba(255,107,26,.4))}
+  .rp-card p{margin-top:10px;font-size:15px;color:var(--ash)}
+  .rp-card .idea-n{margin-right:4px}
+  .voices{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+  .voice{font-size:12px;padding:6px 12px;border-radius:999px;background:#2a1c14;border:1px solid #4a3526;color:var(--gold)}
+
+  /* ============ 2. TRICKSTER — slanted, "broken rule" ============ */
+  .trick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .trick{
+    background:repeating-linear-gradient(45deg,#1a1108,#1a1108 12px,#170f07 12px,#170f07 24px);
+    border:1px dashed #5a3d22;border-radius:12px;padding:16px 18px;position:relative;transition:.2s;
+  }
+  .trick:hover{transform:rotate(-.6deg) translateY(-3px);border-color:var(--ember-hot);border-style:solid}
+  .trick .rule{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blood);margin-bottom:7px;text-decoration:line-through;opacity:.8}
+  .trick p{font-size:15px}
+
+  /* ============ 3. WHAT IF — neon scenario blocks ============ */
+  .whatif-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .whatif{
+    border:1px solid #2f3b5a;border-radius:14px;padding:18px;position:relative;
+    background:linear-gradient(160deg,rgba(59,107,214,.10),rgba(20,13,10,.6));transition:.2s;
+  }
+  .whatif:hover{border-color:var(--blue);box-shadow:0 0 26px rgba(59,107,214,.2);transform:translateY(-3px)}
+  .whatif .q{font-size:13px;font-weight:800;letter-spacing:.04em;color:#8fb0ff;text-transform:uppercase;margin-bottom:9px}
+  .whatif p{font-size:15px}
+  .whatif.hl{border-color:var(--gold);background:linear-gradient(160deg,rgba(255,207,92,.12),rgba(20,13,10,.6))}
+  .whatif.hl .q{color:var(--gold)}
+  .seed{position:absolute;top:10px;right:12px;font-size:10px;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;opacity:.85}
+
+  /* ============ 4. SENSORY BAIT SWAP — sensation foregrounded ============ */
+  .sens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .sens{
+    border-radius:14px;padding:18px;background:linear-gradient(165deg,#1d1410,#120c09);
+    border:1px solid #3d2b20;position:relative;overflow:hidden;transition:.2s;
+  }
+  .sens:hover{transform:translateY(-3px);border-color:var(--ember)}
+  .sens .word{
+    font-size:clamp(22px,3vw,30px);font-weight:900;letter-spacing:.02em;line-height:1;
+    background:var(--flame);-webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
+  .sens p{font-size:14.5px;color:var(--ash)}
+  .sens.wild{border:1px solid var(--gold);box-shadow:0 0 28px rgba(255,207,92,.18)}
+  .sens.wild .word{background:linear-gradient(120deg,var(--blue),#7aa0ff 40%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .wildtag{position:absolute;top:0;right:0;background:var(--gold);color:#1a1006;font-size:9px;font-weight:900;letter-spacing:.12em;padding:4px 9px;border-bottom-left-radius:8px}
+
+  /* ============ 5. CUISINE COLLISION — flag mashup chips ============ */
+  .collide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .collide{
+    background:linear-gradient(165deg,#1c1410,#120c09);border:1px solid #3d2b20;border-radius:14px;
+    padding:16px 18px;transition:.2s;position:relative;overflow:hidden;
+  }
+  .collide:hover{transform:translateY(-3px);border-color:var(--ember-hot)}
+  .vs{display:flex;align-items:center;gap:10px;margin-bottom:11px;font-weight:800;font-size:15px}
+  .flag{font-size:24px;line-height:1}
+  .vs .x{color:var(--ember);font-size:13px;font-weight:900;background:#2a1c14;border-radius:50%;width:24px;height:24px;display:grid;place-items:center}
+  .vs .nat{color:var(--gold)}
+  .collide p{font-size:14px;color:var(--smoke)}
+
+  /* ============ generic pushed-domain lists ============ */
+  .rows{display:flex;flex-direction:column;gap:10px}
+  .row{
+    display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(90deg,#1a120d,#140d0a);border:1px solid #33241b;transition:.18s;
+  }
+  .row:hover{border-color:var(--ember);transform:translateX(4px)}
+  .row .bullet{font-size:20px;line-height:1.2;flex-shrink:0}
+  .row p{font-size:15px}
+  .row .lead{color:var(--ember-hot);font-weight:800}
+
+  /* seasonal grid */
+  .season-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
+  .holiday{
+    border-radius:14px;padding:16px;border:1px solid #33241b;transition:.2s;
+    background:linear-gradient(165deg,#1a120d,#120c09);position:relative;
+  }
+  .holiday:hover{transform:translateY(-3px);border-color:var(--ember)}
+  .holiday .h{font-weight:800;font-size:14px;color:var(--gold);margin-bottom:7px;display:flex;gap:8px;align-items:center}
+  .holiday p{font-size:14px;color:var(--ash)}
+
+  /* series vs one-off split */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.split{grid-template-columns:1fr}}
+  .col-head{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #3a2a20}
+  .col-series .col-head{color:var(--ember-hot)}
+  .col-oneoff .col-head{color:var(--blood)}
+  .ser{padding:13px 15px;border-radius:11px;margin-bottom:10px;font-size:14.5px;transition:.18s}
+  .col-series .ser{background:linear-gradient(90deg,#1d130c,#140d0a);border-left:3px solid var(--ember)}
+  .col-oneoff .ser{background:linear-gradient(90deg,#1f110d,#150c0a);border-left:3px solid var(--blood)}
+  .ser:hover{transform:translateX(4px)}
+  .ser b{color:#fff}
+
+  /* ============ INSIGHTS — climax ============ */
+  .insights{
+    margin:96px 0 70px;padding:56px 0;position:relative;border-radius:26px;
+    background:
+      radial-gradient(700px 380px at 50% 0%, rgba(255,107,26,.18), rgba(255,107,26,0) 65%),
+      linear-gradient(180deg,#1a0f08,#0d0907);
+    border:1px solid #4a3122;overflow:hidden;
+  }
+  .insights:before{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:120px;
+    background:radial-gradient(80% 130% at 50% 130%, rgba(255,107,26,.4), rgba(255,107,26,0) 70%);
+    filter:blur(4px);animation:shimmer 5s ease-in-out infinite;
+  }
+  .insights .ihead{text-align:center;position:relative;margin-bottom:40px}
+  .insights .ihead .k{letter-spacing:.4em;text-transform:uppercase;font-size:12px;color:var(--gold);font-weight:700}
+  .insights .ihead h2{
+    font-size:clamp(30px,5vw,52px);font-weight:900;margin-top:12px;
+    background:var(--flame);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .insights .ihead p{color:var(--smoke);margin-top:10px}
+  .icards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;padding:0 32px;position:relative;z-index:2}
+  .icard{
+    background:rgba(20,13,9,.7);border:1px solid #4a3122;border-radius:16px;padding:22px;
+    backdrop-filter:blur(2px);transition:.25s;
+  }
+  .icard:hover{transform:translateY(-5px);border-color:var(--ember-hot);box-shadow:0 18px 50px rgba(224,65,15,.25)}
+  .icard .tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ember-hot);font-weight:800}
+  .icard h3{font-size:20px;margin:8px 0 10px;font-weight:800;color:#fff}
+  .icard p{font-size:14.5px;color:var(--smoke)}
+
+  /* wildcard #33 special */
+  .wildcard{
+    grid-column:1/-1;margin-top:4px;border-radius:18px;padding:30px 28px;position:relative;overflow:hidden;
+    background:linear-gradient(110deg, rgba(59,107,214,.22), rgba(20,13,9,.85) 42%, rgba(255,91,138,.22));
+    border:1px solid var(--gold);box-shadow:0 0 50px rgba(255,207,92,.18);
+  }
+  .wildcard .wbadge{
+    display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:900;
+    color:#1a1006;background:var(--gold);padding:5px 13px;border-radius:999px;
+    animation:pulseglow 2.6s ease-in-out infinite;
+  }
+  @keyframes pulseglow{0%,100%{box-shadow:0 0 0 rgba(255,207,92,.5)}50%{box-shadow:0 0 24px rgba(255,207,92,.8)}}
+  .wildcard h3{
+    font-size:clamp(22px,3.4vw,32px);font-weight:900;margin:14px 0 8px;
+    background:linear-gradient(100deg,#7aa0ff,#cdd8ff 45%,#ffb0c8);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .wildcard p{font-size:15px;color:var(--ash);max-width:760px}
+  .flip{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:800;font-size:15px}
+  .swatch{width:22px;height:22px;border-radius:6px;display:inline-block;box-shadow:0 0 12px currentColor}
+  .blue-s{background:var(--blue);color:var(--blue)}
+  .pink-s{background:var(--pink);color:var(--pink)}
+  .arrow{color:var(--gold);font-weight:900}
+
+  /* footer */
+  footer{
+    text-align:center;padding:50px 20px 70px;color:var(--smoke-dim);font-size:13px;
+    border-top:1px solid #2a1e16;margin-top:40px;
+  }
+  footer .fire{font-size:22px;display:block;margin-bottom:12px;animation:flick 2.6s ease-in-out infinite}
+  footer b{color:var(--ember-hot)}
+</style>
+</head>
+<body>
+
+<div class="embers" id="embers" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="heatshimmer"></div>
+    <div class="kicker">BMad Brainstorming Keepsake</div>
+    <h1>Wild Creative <span class="flick">🔥</span> Grilling Ideas</h1>
+    <p class="sub">Flavors, tastes &amp; techniques — reverse-engineered for the scroll. A live-fire-at-night ideation session, captured.</p>
+    <div class="goal">🎯 <b>Goal:</b> Generate wild, scroll-stopping grilling ideas to impress on social media</div>
+
+    <div class="stats">
+      <div class="stat"><div class="n">80</div><div class="l">Ideas</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">Creative Lenses</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Insights</div></div>
+      <div class="stat"><div class="n">∞</div><div class="l">Reveals</div></div>
+    </div>
+
+    <div class="lenses">
+      <a class="lens-chip" href="#l1"><span class="dot"></span>1 · Role Playing</a>
+      <a class="lens-chip" href="#l2"><span class="dot"></span>2 · Trickster's Gambit</a>
+      <a class="lens-chip" href="#l3"><span class="dot"></span>3 · What If Scenarios</a>
+      <a class="lens-chip invented" href="#l4"><span class="dot"></span>4 · Sensory Bait Swap ✦</a>
+      <a class="lens-chip invented" href="#l5"><span class="dot"></span>5 · Cuisine Collision ✦</a>
+      <a class="lens-chip pushed" href="#l6"><span class="dot"></span>6 · Interactive Grills</a>
+      <a class="lens-chip pushed" href="#l7"><span class="dot"></span>7 · Seasonal Stunts</a>
+      <a class="lens-chip pushed" href="#l8"><span class="dot"></span>8 · Series vs One-Offs</a>
+    </div>
+  </header>
+
+  <!-- ================= 1. ROLE PLAYING ================= -->
+  <section id="l1">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">🎭 Role Playing</span>
+    </div>
+    <p class="sec-desc">Voices around the fire — each character craves a different hook.</p>
+    <div class="voices">
+      <span class="voice">The Algorithm</span><span class="voice">Pitmaster Purist</span>
+      <span class="voice">Flavor Chemist</span><span class="voice">Dopamine Scroller</span>
+      <span class="voice">Vegetarian Guest</span>
+    </div>
+    <div class="cards">
+      <div class="rp-card"><div class="rp-emoji">🍉</div><p><span class="idea-n">01</span> <b>Watermelon "ham"</b> — scored, smoked 4hr, glazed, carved tableside like a holiday roast; the carve reveal is the hook.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🌋</div><p><span class="idea-n">02</span> <b>Molten-core meatball/burger</b> that gushes cheese in slow-mo on the cut — the lava reveal.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🛠️</div><p><span class="idea-n">03</span> Grill on a clean steel <b>shovel</b> over coals — "redneck hibachi," real sear, absurd visual.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🪵</div><p><span class="idea-n">04</span> <b>Split-wood steak</b>: half hickory / half cherry smoke, served with a visible line down the middle — two flavors, one cut.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🪓</div><p><span class="idea-n">05</span> <b>Coffee-cocoa rubbed tomahawk</b> lacquered in chili-honey, torched tableside.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🍋</div><p><span class="idea-n">06</span> <b>Grilled-lemonade glaze</b> — char citrus halves, squeeze smoky-sweet juice as finishing sauce.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🧀</div><p><span class="idea-n">07</span> <b>Rainbow grilled-cheese skewers</b> on rosemary sprigs — the pull-apart cheese-stretch shot.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🍣</div><p><span class="idea-n">08</span> <b>Grilled fruit "sushi"</b> — torched mango/pineapple on coconut sticky rice + nori, dessert course.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🥦</div><p><span class="idea-n">09</span> <b>Whole grilled cauliflower steak</b> in miso butter, charred black, carved like a roast — veg as centerpiece.</p></div>
+      <div class="rp-card"><div class="rp-emoji">🟣</div><p><span class="idea-n">10</span> <b>Smoked beet "tartare"</b> — fools everyone into thinking it's beef.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 2. TRICKSTER ================= -->
+  <section id="l2">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">🃏 Trickster's Gambit</span>
+    </div>
+    <p class="sec-desc">Cheat the grill, invert it, break the sacred BBQ rules.</p>
+    <div class="trick-grid">
+      <div class="trick"><div class="rule">No fire on ice</div><p><span class="idea-n">11</span> <b>Grill INSIDE a block of ice</b> — sear on a salt block resting in a carved ice slab; fire-on-ice contrast shot.</p></div>
+      <div class="trick"><div class="rule">You need a grate</div><p><span class="idea-n">12</span> <b>Cook with no grill</b> — bury seasoned meat directly in coals (clinch/caveman steak): ash-crusted, zero grate.</p></div>
+      <div class="trick"><div class="rule">Grills heat, not freeze</div><p><span class="idea-n">13</span> <b>Reverse the heat: grill ice cream</b> — flash-char a frozen brick so the outside caramelizes, inside stays frozen.</p></div>
+      <div class="trick"><div class="rule">Grilling means food</div><p><span class="idea-n">14</span> <b>Smoke water</b> — cold-smoke ice cubes, drop into a cocktail on camera; a "grilled drink," no food at all.</p></div>
+      <div class="trick"><div class="rule">The dish is the star</div><p><span class="idea-n">15</span> <b>Grill the garnish, not the dish</b> — char herbs/limes/onions and build the reveal around the SIDES.</p></div>
+      <div class="trick"><div class="rule">Earn your smoke ring</div><p><span class="idea-n">16</span> <b>Cheat the smoke ring</b> — inject pink before cooking so a "low-effort" cook fakes a 14hr brisket look (confession video).</p></div>
+      <div class="trick"><div class="rule">Dessert isn't BBQ</div><p><span class="idea-n">17</span> <b>Grill dessert AS the main</b> — a charred angel-food "s'mores log" carved like brisket, marshmallow bark.</p></div>
+      <div class="trick"><div class="rule">Use proper fuel</div><p><span class="idea-n">18</span> <b>Use the wrong fuel on purpose</b> — grill over cinnamon sticks, dried orange peels, or used wine-barrel staves.</p></div>
+      <div class="trick"><div class="rule">Grills only</div><p><span class="idea-n">19</span> <b>Grill on a clothes iron / engine block / lawnmower blade</b> homage — a "will it grill?" chaos series.</p></div>
+      <div class="trick"><div class="rule">Chef does the cutting</div><p><span class="idea-n">20</span> <b>Invert plating</b> — serve the steak whole and uncut, hand guests scissors, let them cut their own on camera.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 3. WHAT IF ================= -->
+  <section id="l3">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">⚡ What If Scenarios</span>
+    </div>
+    <p class="sec-desc">Detonate one constraint at a time — no budget, opposite-true, problem-vanished.</p>
+    <div class="whatif-grid">
+      <div class="whatif"><div class="q">What if heat were unlimited?</div><p><span class="idea-n">21</span> A 2000°F afterburner sear on a jet-torch — 7-second steak crust, a blowtorch ballet.</p></div>
+      <div class="whatif hl"><div class="q">What if the grill were 20ft long?</div><span class="seed">↳ seed for #33</span><p><span class="idea-n">22</span> A whole-table fire-trench feast — guests grill their own as it passes (yakiniku-meets-conveyor).</p></div>
+      <div class="whatif"><div class="q">What if smoke were a color?</div><p><span class="idea-n">23</span> Flavor-coded colored smoke (food-safe) puffs matched to each rub on the reveal.</p></div>
+      <div class="whatif"><div class="q">What if every dish were ONE ingredient?</div><p><span class="idea-n">24</span> Whole onion roasted into a jammy "bloomin' flower"; a whole-cabbage "steak."</p></div>
+      <div class="whatif"><div class="q">What if grilling were ASMR-only?</div><p><span class="idea-n">25</span> No talking — just sizzle, drip, crackle, knife: a "mukbang grill" format.</p></div>
+      <div class="whatif"><div class="q">What if the opposite of low-and-slow won?</div><p><span class="idea-n">26</span> A 60-second hyper-grill challenge — full meal start-to-plate under a minute.</p></div>
+      <div class="whatif"><div class="q">What if there were no plates?</div><p><span class="idea-n">27</span> Eat everything off the grate / off a shovel / off a hot stone — hands only.</p></div>
+      <div class="whatif"><div class="q">What if the marinade were a drink?</div><p><span class="idea-n">28</span> Marinate in cola, espresso, IPA, pickle brine — taste-test which wins on camera.</p></div>
+      <div class="whatif"><div class="q">What if you grilled a whole SEASON in one cook?</div><p><span class="idea-n">29</span> A "four seasons" board — same protein, 4 regional rubs/woods, side by side.</p></div>
+      <div class="whatif"><div class="q">What if fire were the seasoning?</div><p><span class="idea-n">30</span> Grill over live aromatics — lavender, hay, pine, tea leaves — smoke as the only spice.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 4. SENSORY BAIT SWAP ================= -->
+  <section id="l4">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <span class="sec-title">👁️ Sensory Bait Swap</span>
+      <span class="sec-tag invented">✦ Invented Lens</span>
+    </div>
+    <p class="sec-desc">Start from the scroll-stopping sensation, then reverse-engineer the grill dish that maximizes it.</p>
+    <div class="sens-grid">
+      <div class="sens"><div class="word">🫠 STRETCH</div><p><span class="idea-n">31</span> A grilled raclette wheel scraped molten over a charred-meat board — a 3-foot cheese pull.</p></div>
+      <div class="sens"><div class="word">💨 STEAM BURST</div><p><span class="idea-n">32</span> Cedar-plank salmon sealed under a glass cloche — lift it and a wall of smoke pours out tableside.</p></div>
+      <div class="sens wild"><span class="wildtag">WILDCARD</span><div class="word">🔵 COLOR-SHIFT</div><p><span class="idea-n">33</span> A butterfly-pea glaze that flips from blue to pink when a squeeze of grilled-lime hits it on camera.</p></div>
+      <div class="sens"><div class="word">🔥 SIZZLE</div><p><span class="idea-n">34</span> Served on a screaming-hot lava stone so the food keeps cooking + roaring while filming.</p></div>
+      <div class="sens"><div class="word">💧 DRIP</div><p><span class="idea-n">35</span> A slow-mo basting "mop pour" of glossy glaze over ribs, catching firelight.</p></div>
+      <div class="sens"><div class="word">🥄 CRUNCH</div><p><span class="idea-n">36</span> A brûlée-style sugar crust torched onto grilled pineapple — the spoon-crack ASMR.</p></div>
+      <div class="sens"><div class="word">🌿 PEEL</div><p><span class="idea-n">37</span> Grill in a leaf wrapper (banana/fig/corn husk) and unwrap the steaming reveal on camera.</p></div>
+      <div class="sens"><div class="word">🌋 FLAME-WHOOSH</div><p><span class="idea-n">38</span> A controlled flambé finish — bourbon or rum poured for the live fireball glaze.</p></div>
+      <div class="sens"><div class="word">〰️ JIGGLE</div><p><span class="idea-n">39</span> A grilled fat-cap or seared custard that wobbles — the slow-mo jiggle close-up.</p></div>
+      <div class="sens"><div class="word">🌭 SNAP</div><p><span class="idea-n">40</span> A grill-blistered skin-on link with the audible casing snap as it's cut.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 5. CUISINE COLLISION ================= -->
+  <section id="l5">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <span class="sec-title">💥 Cuisine Collision</span>
+      <span class="sec-tag invented">✦ Invented Lens</span>
+    </div>
+    <p class="sec-desc">Smash two unrelated food cultures on the grill — find the dish in the overlap.</p>
+    <div class="collide-grid">
+      <div class="collide"><div class="vs"><span class="flag">🇰🇷</span><span class="nat">Korean</span><span class="x">×</span><span class="flag">🤠</span><span class="nat">Texas</span></div><p><span class="idea-n">41</span> Gochujang-bourbon glazed brisket burnt ends, sesame-scallion bark, ssam lettuce wraps.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇯🇵</span><span class="nat">Japanese</span><span class="x">×</span><span class="flag">🇲🇽</span><span class="nat">Mexican</span></div><p><span class="idea-n">42</span> Miso-marinated al pastor on the trompo, grilled pineapple + yuzu salsa, nori taco.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇮🇳</span><span class="nat">Indian</span><span class="x">×</span><span class="flag">🍖</span><span class="nat">US BBQ</span></div><p><span class="idea-n">43</span> Tandoori-spiced smoked ribs basted in tamarind-mango BBQ, naan instead of a bun.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇹🇭</span><span class="nat">Thai</span><span class="x">×</span><span class="flag">🇦🇷</span><span class="nat">Argentine</span></div><p><span class="idea-n">44</span> Lemongrass-galangal chimichurri over grilled skirt steak, fish-sauce caramel finish.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇮🇹</span><span class="nat">Italian</span><span class="x">×</span><span class="flag">🇯🇵</span><span class="nat">Japanese</span></div><p><span class="idea-n">45</span> Grilled mozzarella-stuffed onigiri "arancini," binchotan char, marinara-ponzu dip.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇪🇹</span><span class="nat">Ethiopian</span><span class="x">×</span><span class="flag">🍑</span><span class="nat">Southern</span></div><p><span class="idea-n">46</span> Berbere-rubbed grilled chicken with an injera "waffle" and honey-hot drizzle.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇫🇷</span><span class="nat">French</span><span class="x">×</span><span class="flag">🌮</span><span class="nat">Tex-Mex</span></div><p><span class="idea-n">47</span> Grilled brie "queso" fondue board with charred baguette + jalapeño + brisket dippers.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇻🇳</span><span class="nat">Vietnamese</span><span class="x">×</span><span class="flag">🇺🇸</span><span class="nat">Hawaiian</span></div><p><span class="idea-n">48</span> Lemongrass-grilled pork over a charred-pineapple poke bowl, nuoc cham + spam crisp.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🧆</span><span class="nat">Mid-East</span><span class="x">×</span><span class="flag">🍖</span><span class="nat">BBQ</span></div><p><span class="idea-n">49</span> Za'atar-smoked lamb shoulder with grilled-halloumi "burnt ends," pomegranate glaze.</p></div>
+      <div class="collide"><div class="vs"><span class="flag">🇵🇭</span><span class="nat">Filipino</span><span class="x">×</span><span class="flag">🌽</span><span class="nat">Carolina</span></div><p><span class="idea-n">50</span> Inasal-meets-vinegar-pepper whole hog, calamansi mop, ube s'mores for dessert.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 6. INTERACTIVE ================= -->
+  <section id="l6">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <span class="sec-title">🙌 Interactive / Participation Grills</span>
+      <span class="sec-tag pushed">↗ Pushed Domain</span>
+    </div>
+    <p class="sec-desc">Hand the audience the tongs — content that the crowd helps cook.</p>
+    <div class="rows">
+      <div class="row"><span class="bullet">🗳️</span><p><span class="idea-n">51</span> <span class="lead">Comment-controlled cook:</span> viewers vote the rub/wood/sauce last video, you cook the winner this one — a choose-your-own grill saga.</p></div>
+      <div class="row"><span class="bullet">🍢</span><p><span class="idea-n">52</span> <span class="lead">Build-your-own fire-trench bar:</span> guests pick raw skewers from a "grill omakase" board and cook their own on a long trench.</p></div>
+      <div class="row"><span class="bullet">🙈</span><p><span class="idea-n">53</span> <span class="lead">Blindfold flavor challenge:</span> guests guess the wood/spice/mystery protein on camera — reaction-driven content.</p></div>
+      <div class="row"><span class="bullet">🫙</span><p><span class="idea-n">54</span> <span class="lead">The "one weird ingredient" jar:</span> a stranger/guest draws a random pantry item you MUST incorporate live.</p></div>
+      <div class="row"><span class="bullet">🎡</span><p><span class="idea-n">55</span> <span class="lead">Grill roulette wheel:</span> spin for protein + cuisine + constraint, cook whatever it lands on — no do-overs.</p></div>
+      <div class="row"><span class="bullet">🔥</span><p><span class="idea-n">56</span> <span class="lead">Tableside finishing theater:</span> guests torch/glaze/salt their own portion from a caddy — everyone's a chef on camera.</p></div>
+      <div class="row"><span class="bullet">🔁</span><p><span class="idea-n">57</span> <span class="lead">Duet/stitch bait:</span> cook to a deliberate cliffhanger ("what would YOU put on this?") and feature the best stitches next time.</p></div>
+      <div class="row"><span class="bullet">🏡</span><p><span class="idea-n">58</span> <span class="lead">Neighbor smoke-off:</span> surprise-deliver a plate over the fence, film the reaction — a recurring "feeding the block" series.</p></div>
+      <div class="row"><span class="bullet">🧒</span><p><span class="idea-n">59</span> <span class="lead">Kids-grade-the-grill:</span> let kids rate the wild dish 1–10 with brutally honest faces — wholesome chaos.</p></div>
+      <div class="row"><span class="bullet">🌶️</span><p><span class="idea-n">60</span> <span class="lead">Live-fire trivia:</span> right answer = a bite of the showstopper, wrong = the ghost-pepper version.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 7. SEASONAL ================= -->
+  <section id="l7">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <span class="sec-title">🗓️ Seasonal / Holiday Stunts</span>
+      <span class="sec-tag pushed">↗ Pushed Domain</span>
+    </div>
+    <p class="sec-desc">Calendar moments engineered into can't-scroll-past spectacles.</p>
+    <div class="season-grid">
+      <div class="holiday"><div class="h">❄️ Blizzard</div><p><span class="idea-n">61</span> Shovel a snow-pit, fire up mid-storm, steaks steaming against falling snow — winter-grilling flex.</p></div>
+      <div class="holiday"><div class="h">🦃 Thanksgiving</div><p><span class="idea-n">62</span> Whole spatchcock turkey on the grill, maple-bourbon-sage glaze, deep-mahogany skin reveal.</p></div>
+      <div class="holiday"><div class="h">🎃 Halloween</div><p><span class="idea-n">63</span> Blackened "charcoal" buns, blood-red beet-gochujang glaze, smoke-fog plating, spooky reveal.</p></div>
+      <div class="holiday"><div class="h">💘 Valentine's</div><p><span class="idea-n">64</span> Heart-shaped reverse-seared filet for two, rose-petal smoked, chili-chocolate finishing sauce.</p></div>
+      <div class="holiday"><div class="h">🎆 Fourth of July</div><p><span class="idea-n">65</span> Red/white/blue grilled-fruit flag platter + a giant flag-glazed tomahawk centerpiece.</p></div>
+      <div class="holiday"><div class="h">🧧 Lunar New Year</div><p><span class="idea-n">66</span> Whole grilled fish (luck), citrus-soy lacquer, scallion brush, served head-to-tail intact.</p></div>
+      <div class="holiday"><div class="h">🌮 Cinco de Mayo</div><p><span class="idea-n">67</span> Trompo al pastor with a 6-foot flame kiss + a pineapple flip-catch trick shot.</p></div>
+      <div class="holiday"><div class="h">🎄 Christmas</div><p><span class="idea-n">68</span> Smoked prime rib "yule log" with a charred-rosemary "pine" crust, grilled cranberry mostarda.</p></div>
+      <div class="holiday"><div class="h">🐑 Easter</div><p><span class="idea-n">69</span> Whole grilled leg of lamb with mint-chimichurri + pastel grilled-fruit deviled-egg dessert riff.</p></div>
+      <div class="holiday"><div class="h">🌅 Golden Hour</div><p><span class="idea-n">70</span> Dawn cook for the dramatic backlit smoke and lens-flare beauty shots.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 8. SERIES VS ONE-OFF ================= -->
+  <section id="l8">
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <span class="sec-title">📺 Recurring Series vs One-Off Showstoppers</span>
+      <span class="sec-tag pushed">↗ Pushed Domain</span>
+    </div>
+    <p class="sec-desc">Formats that compound, set against single explosive spikes.</p>
+    <div class="split">
+      <div class="col-series">
+        <div class="col-head">🔁 Recurring Series</div>
+        <div class="ser"><span class="idea-n">71</span> <b>"Will It Grill?"</b> — one absurd item per episode (Oreos, a whole pizza, sushi, a Pop-Tart): an infinite hook engine.</div>
+        <div class="ser"><span class="idea-n">72</span> <b>"Grilling Every Country A–Z"</b> — one nation's signature grill per episode, alphabetical, built-in completionist following.</div>
+        <div class="ser"><span class="idea-n">73</span> <b>"60-Second Fire"</b> — full dish start-to-plate under a minute, every episode, a speedrun leaderboard.</div>
+        <div class="ser"><span class="idea-n">74</span> <b>"One Ingredient, Five Ways"</b> — pick a single item weekly, grill it five wildly different ways, viewers rank.</div>
+        <div class="ser"><span class="idea-n">75</span> <b>"Grill the Comments"</b> — cook the most-upvoted insane suggestion from last video; an accountability hook.</div>
+        <div class="ser"><span class="idea-n">76</span> <b>"Smoke &amp; Mirrors"</b> — each episode a food illusion (sweet looks savory, veg looks meat): a guess-the-trick format.</div>
+        <div class="ser"><span class="idea-n">80</span> <b>"Grandparents' Grill"</b> — recreate a heritage recipe with the elder narrating: emotional, shareable, evergreen.</div>
+      </div>
+      <div class="col-oneoff">
+        <div class="col-head">💣 One-Off Mega Showstoppers</div>
+        <div class="ser"><span class="idea-n">77</span> The <b>100-layer grilled lasagna</b>-on-the-pit, or a 6-foot skewer kebab carried by two people.</div>
+        <div class="ser"><span class="idea-n">78</span> <b>"Every Wood at Once"</b> — a steak smoked over 12 woods in sequence, blind-tasted for the best single note.</div>
+        <div class="ser"><span class="idea-n">79</span> The <b>whole-animal / whole-garden feast</b> — entire meal incl. dessert + cocktail on one fire, no kitchen.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INSIGHTS — CLIMAX ================= -->
+  <div class="insights">
+    <div class="ihead">
+      <div class="k">The Payoff</div>
+      <h2>4 Insights From the Coals</h2>
+      <p>Where 80 sparks resolve into a strategy.</p>
+    </div>
+    <div class="icards">
+      <div class="icard">
+        <div class="tag">Strongest Vein</div>
+        <h3>The Reveal Is the Product</h3>
+        <p>Watermelon-ham, beet-tartare, s'mores-brisket and "Smoke &amp; Mirrors" are all bait-and-switch wearing different hats. The trick of transformation — not the recipe — is the content.</p>
+      </div>
+      <div class="icard">
+        <div class="tag">Recipe to Win</div>
+        <h3>Sensation Beats Recipe</h3>
+        <p>Pair a Cuisine Collision flavor with a Sensory Bait Swap hook → substance + stopping power in a single dish. Taste keeps them; the sensation stops the thumb.</p>
+      </div>
+      <div class="icard">
+        <div class="tag">Funnel Mechanic</div>
+        <h3>One-Offs Spike, Series Compound</h3>
+        <p>Use a MEGA showstopper as the trailer that recruits viewers into a recurring series — Will It Grill, Grill the Comments, Grandparents' Grill. Spike to capture, series to keep.</p>
+      </div>
+
+      <!-- WILDCARD #33 -->
+      <div class="wildcard">
+        <span class="wbadge">★ Buried Wildcard · Idea #33</span>
+        <h3>The Butterfly-Pea Color-Flip Glaze</h3>
+        <p>Novel + tasty-adjacent + unscrollable. A glaze that visibly flips color when grilled-lime hits it on camera — the signature <i>"how did they DO that"</i> move. The one idea worth building a whole identity around.</p>
+        <div class="flip">
+          <span class="swatch blue-s"></span> Butterfly-pea blue
+          <span class="arrow">— squeeze of grilled lime →</span>
+          <span class="swatch pink-s"></span> flips to pink
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="fire">🔥</span>
+    A <b>BMad</b> brainstorming keepsake — <i>Wild creative grilling ideas: flavors, tastes &amp; techniques.</i><br>
+    Ideate-for-me mode · 80 ideas · 8 lenses (3 chosen + 2 invented + 3 pushed domains) · session mined out.<br>
+    Captured June 1, 2026.
+  </footer>
+
+</div>
+
+<script>
+  // lightweight ambient embers
+  (function(){
+    var c = document.getElementById('embers');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduce) return;
+    var N = 28;
+    for(var i=0;i<N;i++){
+      var e = document.createElement('div');
+      e.className='ember';
+      var size = 2 + Math.random()*4;
+      e.style.left = (Math.random()*100)+'vw';
+      e.style.width = size+'px';
+      e.style.height = size+'px';
+      e.style.animationDuration = (6 + Math.random()*9)+'s';
+      e.style.animationDelay = (Math.random()*10)+'s';
+      c.appendChild(e);
+    }
+  })();
+</script>
+</body>
+</html>
